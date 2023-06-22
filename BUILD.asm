@@ -1,7 +1,22 @@
-*=$0801 
-            byte    $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096       ;basic loader
+﻿!to "rampage.prm",cbm
 
-;MUSIC          EQU $200  ;to $B00
+*=$0801 
+
+!byte    $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096       ;basic loader
+
+!source "ramp.asm"
+!source "move.asm"
+!source "irq.asm"
+!source "djcode.asm"
+!source "dis.asm"
+!source "debug.asm"
+!source "copy.asm"
+!source "back.asm"
+!source "ape0.asm"
+!source "ape1.asm"
+!source "ape2.asm"
+
+;MUSIC          = $200  ;to $B00
 DTILES          = $7000  ;to $7500
 BACKDROP        = $B00 ;to 1300
 COLMEM          = $1300
@@ -23,73 +38,84 @@ SCEOR           = %00001100
                 ; SCR1 F400 %1101xxxx
                 ; EOR WITH  %0011xxxx
                 ; SCR2 F800 %1110xxxx
-SCREENCHSET     byte %11010000   ; TO $F0
+SCREENCHSET     = %11010000   ; TO $F0
 CHEOR           = %00110000
 
-NEXTLEVEL       byte 72,70,72,72,70,72
-CRACKX          byte 0,0,0,0,0,0,0,0,0,0
-BUILDWIDTH      byte 4,5,4,4,5,4
-BUILDWIDTH1     byte 8,10,8,8,10,8
-BUILDHEIGHT     byte 8,14,10,6,10,12
-DREQUIRED       byte 10,12,8,4,10,9
-SBTOPTAB        byte O-80,O-128,O-96      
-                byte O-72,O-120,O-120
+NEXTLEVEL       !byte 72,70,72,72,70,72
+CRACKX          !byte 0,0,0,0,0,0,0,0,0,0
+BUILDWIDTH      !byte 4,5,4,4,5,4
+BUILDWIDTH1     !byte 8,10,8,8,10,8
+BUILDHEIGHT     !byte 8,14,10,6,10,12
+DREQUIRED       !byte 10,12,8,4,10,9
 
-BACKPOINT       byte 60
-WATERTABLE      byte 39,47,55,00
-WATERPOINT      byte 0
-SCREEN          byte 0
+SBTOPTAB
+                !fill 80,[i+1]
+                !fill 128,[i+1]
+                !fill 96,[i+1]
+                !fill 72,[i+1]
+                !fill 120,[i+1]
+                !fill 120,[i+1]
+
+BACKPOINT       !byte 60
+WATERTABLE      !byte 39,47,55,00
+WATERPOINT      !byte 0
+SCREEN          !byte 0
 BUILDSTARTLB
-        byte 72,32
-        byte 248,208,168,128,88,48,8
-        byte 224,184,144,104,64,24
-        byte 240,200,160,120,80,40,0
+        !byte 72,32
+        !byte 248,208,168,128,88,48,8
+        !byte 224,184,144,104,64,24
+        !byte 240,200,160,120,80,40,0
 
 BUILDSTARTHB
-        byte 3,3
-        byte 2,2,2,2,2,2,2
-        byte 1,1,1,1,1,1
-        byte 0,0,0,0,0,0,0
+        !byte 3,3
+        !byte 2,2,2,2,2,2,2
+        !byte 1,1,1,1,1,1
+        !byte 0,0,0,0,0,0,0
 
-PATTERNHB       byte <BUILDING1,<BUILDING2,<BUILDING3,<BUILDING4,<BUILDING5,<BUILDING6
-PATTERNLB       byte >BUILDING1,>BUILDING2,>BUILDING3,>BUILDING4,>BUILDING5,>BUILDING6
+PATTERNHB       !byte <BUILDING1,<BUILDING2,<BUILDING3,<BUILDING4,<BUILDING5,<BUILDING6
+PATTERNLB       !byte >BUILDING1,>BUILDING2,>BUILDING3,>BUILDING4,>BUILDING5,>BUILDING6
 
 BUILDMAPLB
-        byte 0,64,128,192,0,64,128,192
+        !byte 0,64,128,192,0,64,128,192
 BUILDMAPHB
-        byte SMDJ,SMDJ,SMDJ,SMDJ  
-        byte SMDJ+1,SMDJ+1
+        !byte SMDJ,SMDJ,SMDJ,SMDJ  
+        !byte SMDJ+1,SMDJ+1
 
 SCBACKPOINT
-        byte 40,50,79,70,45,60,55
-        byte 70,66,42,50,61,53,56,47,74,42        
+        !byte 40,50,79,70,45,60,55
+        !byte 70,66,42,50,61,53,56,47,74,42        
 
-STATUS  byte 0
+STATUS  !byte 0
 
-NODEM  LDA #0
+!ZONE BUILD
+
+NODEM
+        LDA #0
         STA STEMP
         LDY RILY
-NODEM2 LDX STEMP
+NODEM2
+        LDX STEMP
         LDA PLAYCHAR,X
-        ASL A
-        ASL A
-        ASL A
+        ASL ;Implied A
+        ASL ;Implied A
+        ASL ;Implied A
         TAY
         LDX #0
-NODEM1  LDA GEORGETEXT,X
+NODEM1
+        LDA GEORGETEXT,X
         STA P1TEXT,Y    
         INY             
         INX
         CPX #8
         BNE NODEM1
         INC STEMP
-       LDA STEMP
+        LDA STEMP
         CMP #3
         BNE NODEM2
         
-
         LDX #2
-RESED   LDA ENERGY,X
+RESED
+        LDA ENERGY,X
         BEQ COMPUTER
         BMI COMPUTER
         CMP #127
@@ -140,7 +166,7 @@ INIB1   STA BULLETWIPE,Y
         STA SCREEN
 INI1    INC SCREEN
         LDA SCREEN
-        ASL A
+        ASL ;Implied A
         TAY
         LDA TYPOINT,Y
         STA SMCBT+1
@@ -432,7 +458,7 @@ SMCBX   LDA $FFFF,Y   ;SMODIFIDED
         STA SBXEND,Y
         LDA SBTOPTAB,X
         STA SBTOP,Y
-        LDA DREQUIRED,X
+        LDA DR=IRED,X
         STA SDAMAGE,Y
         LDA IMTIRED
         TAX
@@ -693,7 +719,7 @@ COPYLOOP1
         BMI COPYED1
         JMP COPYLOOP1
 COPYED1 RTS
-MOUNT EQU BACKDROP(BW*13)
+MOUNT = BACKDROP(BW*13)
 DMOUNTS
         LDA SCREENTEMP
         CMP #$F8
@@ -964,92 +990,92 @@ ITSAWINDOW
         RTS
 
 BUILDING1
-        DB $20,$21,$22,$23
-        DB $34,$35,$36,$37
-        DB $34,$35,$36,$37
-        DB $34,$35,$36,$37
-        DB $48,$49,$4A,$4B
+        !byte $20,$21,$22,$23
+        !byte $34,$35,$36,$37
+        !byte $34,$35,$36,$37
+        !byte $34,$35,$36,$37
+        !byte $48,$49,$4A,$4B
 
 BUILDING2
-        byte $60,$21,$38,$22,$61
+        !byte $60,$21,$38,$22,$61
         ;HEX "2021222223"
-        byte $34,$35,$4C,$36,$37
-        byte $34,$35,$4C,$36,$37
-        byte $34,$35,$4C,$36,$37
-        byte $34,$35,$4C,$36,$37
-        byte $34,$35,$4C,$36,$37
-        byte $34,$35,$4C,$36,$37
-        byte $62,$63,$5F,$4E,$4D
+        !byte $34,$35,$4C,$36,$37
+        !byte $34,$35,$4C,$36,$37
+        !byte $34,$35,$4C,$36,$37
+        !byte $34,$35,$4C,$36,$37
+        !byte $34,$35,$4C,$36,$37
+        !byte $34,$35,$4C,$36,$37
+        !byte $62,$63,$5F,$4E,$4D
 
 BUILDING3
 
-        DB $24,$25,$26,$27
-        DB $34,$35,$36,$37
-        DB $34,$35,$36,$37
-        DB $34,$35,$36,$37
-        DB $34,$35,$36,$37
-        DB $62,$63,$4A,$4B
+        !byte $24,$25,$26,$27
+        !byte $34,$35,$36,$37
+        !byte $34,$35,$36,$37
+        !byte $34,$35,$36,$37
+        !byte $34,$35,$36,$37
+        !byte $62,$63,$4A,$4B
 
 BUILDING4
-        byte $28,$29,$2A,$2B
-        byte $2C,$2D,$2E,$2F
-        byte $2C,$2D,$2E,$2F
-        byte $30,$31,$3E,$3F
+        !byte $28,$29,$2A,$2B
+        !byte $2C,$2D,$2E,$2F
+        !byte $2C,$2D,$2E,$2F
+        !byte $30,$31,$3E,$3F
 
 BUILDING5
-        byte $28,$29,$40,$2A,$2B
-        byte $2C,$2D,$42,$2E,$2F
-        byte $2C,$2D,$42,$2E,$2F
-        byte $2C,$2D,$42,$2E,$2F
-        byte $2C,$44,$43,$32,$33
-        byte $30,$41,$31,$45,$46
+        !byte $28,$29,$40,$2A,$2B
+        !byte $2C,$2D,$42,$2E,$2F
+        !byte $2C,$2D,$42,$2E,$2F
+        !byte $2C,$2D,$42,$2E,$2F
+        !byte $2C,$44,$43,$32,$33
+        !byte $30,$41,$31,$45,$46
 
 BUILDING6
-        byte $51,$54,$53,$52
-        byte $47,$2D,$2E,$50
-        byte $47,$2D,$2E,$50
-        byte $47,$2D,$2E,$50
-        byte $47,$2D,$2E,$50
-        byte $47,$2D,$2E,$50
-        byte $3C,$3D,$32,$33
+        !byte $51,$54,$53,$52
+        !byte $47,$2D,$2E,$50
+        !byte $47,$2D,$2E,$50
+        !byte $47,$2D,$2E,$50
+        !byte $47,$2D,$2E,$50
+        !byte $47,$2D,$2E,$50
+        !byte $3C,$3D,$32,$33
 
-AS      byte 34
-AS1     byte 8
+AS      !byte 34
+AS1     !byte 8
 DAMAGETEXT
-        byte AS1+4,AS1+1,AS1+13,AS1+1,AS1+7,AS1+5,1
+        !byte AS1+4,AS1+1,AS1+13,AS1+1,AS1+7,AS1+5,1
 GEORGETEXT
-        byte AS1+7,AS1+5,AS1+15,AS1+18,AS1+7,AS1+5
+        !byte AS1+7,AS1+5,AS1+15,AS1+18,AS1+7,AS1+5
 RALPHTEXT
-        byte AS1+18,AS1+1,AS1+12,AS1+16,AS1+8,1
+        !byte AS1+18,AS1+1,AS1+12,AS1+16,AS1+8,1
 LIZZYTEXT
-        byte AS1+12,AS1+9,AS1+26,AS1+26,AS1+25,1
+        !byte AS1+12,AS1+9,AS1+26,AS1+26,AS1+25,1
 
 
-        byte AS1+18,AS1+8,AS1+15,AS1+14,AS1+1,1,1,1
-        byte AS1+9,1,AS1+12,AS1+15,AS1+22,AS1+5,1,1
-        byte AS1+25,AS1+15,AS1+21,1,1,1
+        !byte AS1+18,AS1+8,AS1+15,AS1+14,AS1+1,1,1,1
+        !byte AS1+9,1,AS1+12,AS1+15,AS1+22,AS1+5,1,1
+        !byte AS1+25,AS1+15,AS1+21,1,1,1
 
-RILY    byte 0
+RILY    !byte 0
 
 
-P1TEXT  byte 8
-P2TEXT  byte 8
-P3TEXT  byte 8
+P1TEXT  !byte 8
+P2TEXT  !byte 8
+P3TEXT  !byte 8
 
 
 DAMAGE1
-        byte 3,3,3,3,3,3,3,3
+        !byte 3,3,3,3,3,3,3,3
 DAMAGE2
-        byte 1,1,1,1,1,1,1,1
+        !byte 1,1,1,1,1,1,1,1
 DAMAGE3
-        byte 2,2,2,2,2,2,2,2
-        byte 10
+        !byte 2,2,2,2,2,2,2,2
+        !byte 10
 SCORES
-SCORE1 byte 0,0,0,0,0,0,$FF,$FF,$FF
-SCORE2 byte 0,0,0,0,0,0,$FF,$FF,$FF
-SCORE3 byte 0,0,0,0,0,0,$FF,$FF,$FF
-ENH     byte 3,64
-LOSPEED byte 0,0,0
+SCORE1 !byte 0,0,0,0,0,0,$FF,$FF,$FF
+SCORE2 !byte 0,0,0,0,0,0,$FF,$FF,$FF
+SCORE3 !byte 0,0,0,0,0,0,$FF,$FF,$FF
+ENH     !byte 3,64
+LOSPEED !byte 0,0,0
 LOSENERGY
         
 
@@ -1161,28 +1187,28 @@ COMP2   LDA CSET1,Y
         BPL COMP2
         RTS
 CSET2
-        byte $00,$00,$00,$00,$00,$00,$00,$00
-        byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-        byte $FE,$FC,$F8,$F0,$E0,$C0,$80,$00
-        byte $7F,$3F,$1F,$0F,$07,$03,$01,$00
-        byte $00,$1E,$66,$78,$00,$78,$66,$1E
-        byte $E7,$E7,$E7,$E7,$E7,$C3,$A5,$5A
-        byte $E7,$E7,$E7,$E7,$E7,$E7,$E7,$E7
-        byte $DE,$CD,$E3,$E3,$D1,$D4,$83,$83
-        byte $07,$03,$01,$00,$00,$00,$00,$00
+        !byte $00,$00,$00,$00,$00,$00,$00,$00
+        !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+        !byte $FE,$FC,$F8,$F0,$E0,$C0,$80,$00
+        !byte $7F,$3F,$1F,$0F,$07,$03,$01,$00
+        !byte $00,$1E,$66,$78,$00,$78,$66,$1E
+        !byte $E7,$E7,$E7,$E7,$E7,$C3,$A5,$5A
+        !byte $E7,$E7,$E7,$E7,$E7,$E7,$E7,$E7
+        !byte $DE,$CD,$E3,$E3,$D1,$D4,$83,$83
+        !byte $07,$03,$01,$00,$00,$00,$00,$00
         
 
 
 CSET1
-        byte $00,$00,$00,$00,$00,$00,$00,$00
-        byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-        byte $7F,$3F,$0F,$03,$00,$00,$00,$00
-        byte $FE,$FC,$F8,$F0,$E0,$C0,$80,$00
-        byte $7F,$3F,$1F,$0F,$07,$03,$01,$00
-        byte $FF,$FF,$FF,$FF,$FF,$C3,$80,$00
-        byte $FF,$FF,$FF,$FF,$FF,$1F,$00,$00
-        byte $F7,$F7,$E3,$E3,$E3,$C1,$C1,$C1
-        byte $80,$94,$B6,$F7,$F7,$E7,$E3,$81
+        !byte $00,$00,$00,$00,$00,$00,$00,$00
+        !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+        !byte $7F,$3F,$0F,$03,$00,$00,$00,$00
+        !byte $FE,$FC,$F8,$F0,$E0,$C0,$80,$00
+        !byte $7F,$3F,$1F,$0F,$07,$03,$01,$00
+        !byte $FF,$FF,$FF,$FF,$FF,$C3,$80,$00
+        !byte $FF,$FF,$FF,$FF,$FF,$1F,$00,$00
+        !byte $F7,$F7,$E3,$E3,$E3,$C1,$C1,$C1
+        !byte $80,$94,$B6,$F7,$F7,$E7,$E3,$81
 
 VALUES
         RTS
@@ -1201,7 +1227,7 @@ VALUES
 
         RTS
 
-CHUMAN  byte 3
+CHUMAN  !byte 3
 
 NEWGAME
 
