@@ -1,4 +1,4 @@
-﻿HOLE      = COMMON+1
+HOLE      = COMMON+1
 HOLEUP    = HOLE+2
 HOLEDOWN  = HOLE+4
 HOLESIDE  = HOLE+6
@@ -134,18 +134,18 @@ NEXTBUILD INX
     RTS
 
 GOTBUILD  
-        LDA #22
-    SEC     
-    SBC BUILDTALL,X
-    BMI NEXTBUILD
-    STA STEMP
-        LDA FISTY
-    SEC
-    SBC STEMP
+  LDA #22
+  SEC     
+  SBC BUILDTALL,X
+  BMI NEXTBUILD
+  STA STEMP
+  LDA FISTY
+  SEC
+  SBC STEMP
 
-    STA FISTY
-    LSR A
-    STA YHEIGHT
+  STA FISTY
+  LSR ;Implied A
+  STA YHEIGHT
     
           
     
@@ -280,10 +280,10 @@ PRINTOUT
   STA $F401   
   STA $F801
   LDA UPDATE  
-  LSR A
-  LSR A
-  LSR A
-  LSR A
+  LSR ;Implied A
+  LSR ;Implied A
+  LSR ;Implied A
+  LSR ;Implied A
   ADC #ZERO
   STA $F400
   STA $F800

@@ -1,4 +1,4 @@
-﻿;CHECK CRUMBL
+;CHECK CRUMBL
 CHECKCRUMBLE  ; FALL +CRACK
 
   
@@ -107,8 +107,8 @@ SETUP1  LDA #0
 COUNTDOWN !byte 0
 XSTORE    !byte 0
 BANANA    !byte 0
-DUSTCHARS !byte $D9,$DA,$byte,$DC,$DD,$DE
-          !byte $byte,$D9,$DC,$DD,$DA,$D9,$DD,$DE
+DUSTCHARS !byte $D9,$DA,$DB,$DC,$DD,$DE
+          !byte $DB,$D9,$DC,$DD,$DA,$D9,$DD,$DE
           !byte $D9,$D9,$D9,$D9,$D9,$D9
 
 CRACKING  !fill 10,10

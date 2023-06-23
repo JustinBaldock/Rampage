@@ -1,4 +1,4 @@
-﻿; RAMP
+; RAMP
 !zone BACK
 .MAIN  SEI
   LDX #255

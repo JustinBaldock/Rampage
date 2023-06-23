@@ -1,4 +1,4 @@
-﻿CHSET     = $E000
+CHSET     = $E000
 CHARHB    = ($E0)/8
 CBASE     = CHSET+(220*8)
 

@@ -1,4 +1,4 @@
-﻿; RAMP
+; RAMP
 !zone RAMP
 .MAIN    SEI
         LDX #255
@@ -247,7 +247,8 @@ CANBE   STA LASTA,X
 MOVM    JMP CREATE
         
 
-        BLOCK           ; ACTION 1
+BLOCK           ; ACTION 1
+
 WALK    JSR WA
         JSR CLIM
 CHECKF  LDA Y,X
@@ -314,8 +315,9 @@ JUWA    LDA LEFT,X
         INC DIR,X
 .ALSET  JMP WALKL       ; WALK LEFT
 
-.NOM    LDA RIGHT,X
-        BLOCK
+.NOM
+  LDA RIGHT,X
+.BLOCK
         BEQ OFFB
         LDA DIR,X
         BMI .ALSET
@@ -392,15 +394,17 @@ WALKFINE
         CLC
         ADC #1
         CMP #4*4
-        BCC :LESS
+        BCC .LESS
         LDA #0
-:LESS   STA STEP,X
-        LSR A
-        LSR A
-        CLC
-        ADC #8  
-        STA FRAME,X
-:NOM    RTS
+.LESS   
+  STA STEP,X
+  LSR ;Implied A
+  LSR ;Implied A
+  CLC
+  ADC #8  
+  STA FRAME,X
+.NOM
+  RTS
 
 OYT0    !byte 6,2,3,3
 OXT1    !byte 0,-2,-2,-4
@@ -408,15 +412,15 @@ OXT2    !byte -1,2,2,4
 
 FISTPO  LDY HANDY,X
         LDA Y,X
-        LSR A
-        LSR A
-        LSR A
+        LSR ;Implied A
+        LSR ;Implied A
+        LSR ;Implied A
         SEC
         SBC OYT0,Y
         STA FISY,X
         LDA X,X
-        LSR A
-        LSR A
+        LSR ;Implied A
+        LSR ;Implied A
         STA XTEMP
         LDA DIR,X
         BPL SBIT
@@ -609,9 +613,12 @@ NOTW    DEY
 CRUNCH  SEC
         RTS
 
-ONBEG   LDA #255        ; DIRECTION
-        NOPP            ; FACEING
-ONEND   LDA #0
+ONBEG
+  LDA #255        ; DIRECTION
+  NOPP            ; FACEING
+
+ONEND
+  LDA #0
         STA TMP
         TYA
         STA MONONB,X
@@ -675,7 +682,8 @@ NOT     SEC
 TH      CLC
         RTS
 
-        BLOCK
+BLOCK
+
 CLIMB   LDA FIRE,X      ; ACTION 3
         BEQ JOM
         LDA RIGHT,X

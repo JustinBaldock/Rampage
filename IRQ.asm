@@ -1,4 +1,4 @@
-﻿!PSEUDOPC $7800
+!PSEUDOPC $7800
 
 ;MSW -1
 ;EXEC MAIN         
@@ -6,6 +6,18 @@
 ; STARTED 21/05/1987
 ; COPYRIGHT 1987/88
 ; MICHAEL ARCHER
+
+!source "ramp.asm"
+!source "move.asm"
+!source "build.asm"
+!source "djcode.asm"
+!source "dis.asm"
+!source "debug.asm"
+!source "copy.asm"
+;!source "back.asm"
+!source "ape0.asm"
+!source "ape1.asm"
+!source "ape2.asm"
 
   ;DSECT
   ;ORG $00

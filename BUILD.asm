@@ -1,20 +1,8 @@
-﻿!to "rampage.prm",cbm
+!to "rampage.prm",cbm
 
-*=$0801 
+;*=$0801 
 
-!byte    $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096       ;basic loader
-
-!source "ramp.asm"
-!source "move.asm"
-!source "irq.asm"
-!source "djcode.asm"
-!source "dis.asm"
-!source "debug.asm"
-!source "copy.asm"
-!source "back.asm"
-!source "ape0.asm"
-!source "ape1.asm"
-!source "ape2.asm"
+;!byte    $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096       ;basic loader
 
 ;MUSIC          = $200  ;to $B00
 DTILES          = $7000  ;to $7500
