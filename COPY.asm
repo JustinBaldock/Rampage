@@ -1,4 +1,3 @@
-!zone COPY
 CHRTAB  = $1500 ; START OF TABLES
 BL0 = $1C00 ; GEORGE
 BL1 = $1C00+$558  ; RALPH
@@ -18,6 +17,7 @@ APE2  = SO2*64+BANK
   ; X=SPRITE NUMBER 0,1,2
 PLAYCHAR1 !byte 0,0,0
 KEEPX !byte 0
+
 CREATE  
   STX KEEPX
   LDY FRAME,X ; ACTUAL FRAME
@@ -29,8 +29,10 @@ CREATE
   INX
   INX
   JMP NORW1
+
 NORW  LDA PLAYCHAR1,X 
   TAX
+
 NORW1 LDA WHICHT,X    ;,X
   STA WHCR+2  ; HIGHBYTE
   LDA TIM36L,Y  ; Y=FRAME
@@ -48,53 +50,57 @@ NORW1 LDA WHICHT,X    ;,X
   LDA #5
   STA LX
 
-
-BLOOP LDA #5
+BLOOP
+  LDA #5
   STA LY
-ALOOP LDX $FFFF 
+ALOOP
+  LDX $FFFF 
   LDA CHRTAB,X
   STA CM+0
-WHCR  LDA CHRTAB+$100,X 
+WHCR
+  LDA CHRTAB+$100,X 
   STA CM+1
   LDY #0
   LDA #255
-  LDA (CM),Y
-  STA (SM),Y
+  LDA CM,Y
+  STA SM,Y
   LDY #1
-  LDA (CM),Y
+  LDA CM,Y
   LDY #1*6
-  STA (SM),Y
+  STA SM,Y
   LDY #2
-  LDA (CM),Y
+  LDA CM,Y
   LDY #2*6
-  STA (SM),Y
+  STA SM,Y
   LDY #3
-  LDA (CM),Y
+  LDA CM,Y
   LDY #3*6
-  STA (SM),Y
+  STA SM,Y
   LDY #4
-  LDA (CM),Y
+  LDA CM,Y
   LDY #4*6
-  STA (SM),Y
+  STA SM,Y
   LDY #5
-  LDA (CM),Y
+  LDA CM,Y
   LDY #5*6
-  STA (SM),Y
+  STA SM,Y
   LDY #6
-  LDA (CM),Y
+  LDA CM,Y
   LDY #6*6
-  STA (SM),Y
+  STA SM,Y
   LDY #7
-  LDA (CM),Y
+  LDA CM,Y
   LDY #7*6
-  STA (SM),Y
+  STA SM,Y
   INC SM
   BNE SKI1
   INC SM+1
-SKI1  INC ALOOP+1
+SKI1
+  INC ALOOP+1
   BNE SKI2
   INC ALOOP+2
-SKI2  DEC LY
+SKI2
+  DEC LY
   BPL ALOOP
   LDA SM
   CLC
@@ -102,28 +108,34 @@ SKI2  DEC LY
   STA SM
   BCC SKI3
   INC SM+1
-SKI3  DEC LX
+SKI3
+  DEC LX
   BPL BLOOP
   RTS
 
 WHICHT
-  !byte <CHRTAB+$100,<CHRTAB+$200
-  !byte <CHRTAB+$300,<CHRTAB+$400
-  !byte <CHRTAB+$500,<CHRTAB+$600
+  !word <CHRTAB+$100,<CHRTAB+$200
+  !word <CHRTAB+$300,<CHRTAB+$400
+  !word <CHRTAB+$500,<CHRTAB+$600
 
-BLOCKM  !byte <BL0,<BL1,<BL2
+BLOCKM
+  !byte <BL0,<BL1,<BL2
   !byte <BLR0,<BLR1,<BLR2
 
-BLOCKML !byte >BL0,>BL1,>BL2
+BLOCKML
+  !byte >BL0,>BL1,>BL2
   !byte >BLR0,>BLR1,>BLR2
 
-BUFTBL  !byte >BUF0,>BUF1,>BUF2
+BUFTBL
+  !byte >BUF0,>BUF1,>BUF2
   !byte >BUF0,>BUF1,>BUF2
 
-BUFTBH  !byte <BUF0,<BUF1,<BUF2
+BUFTBH
+  !byte <BUF0,<BUF1,<BUF2
   !byte <BUF0,<BUF1,<BUF2
 
-TIM36L  !byte >$000,>$024,>$048,>$06C
+TIM36L
+  !byte >$000,>$024,>$048,>$06C
   !byte >$090,>$0B4,>$0D8,>$0FC
   !byte >$120,>$144,>$168,>$18C
   !byte >$1B0,>$1D4,>$1F8,>$21C
@@ -135,7 +147,8 @@ TIM36L  !byte >$000,>$024,>$048,>$06C
   !byte >$510,>$534,>$558,>$57C
   !byte >$5A0,>$5C4,>$5E8,>$60C
 
-TIM36H  !byte <$000,<$024,<$048,<$06C
+TIM36H
+  !byte <$000,<$024,<$048,<$06C
   !byte <$090,<$0B4,<$0D8,<$0FC
   !byte <$120,<$144,<$168,<$18C
   !byte <$1B0,<$1D4,<$1F8,<$21C

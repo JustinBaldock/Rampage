@@ -8,8 +8,7 @@ CBASE     = CHSET+(220*8)
 
 ;DRAWOBJECTS  ; JUST CALL IT BEFORE COL
 ;SETUPOBJECTS
-
-!zone debug         
+       
 GETCHAR
 DISPCHAR  
   LDY FISTY
@@ -24,48 +23,56 @@ DISPCHAR
   
   
 DISMC
-  LDA (BUILD),Y
+  LDA BUILD,Y
   RTS
 
 BEFORECOLOUR
   JSR DRAWOBJECTS    
-  JSR DRAWWATER
-.MMYOU
+  JSR @DRAWWATER
+
+@MMYOU
   LDX #0
-  JSR MOVE
+  JSR @MOVE
   LDX #1
-  JSR MOVE
+  JSR @MOVE
   LDX #2
-  JMP MOVE
+  JMP @MOVE
+
 AFTERCOLOUR
   JSR DRAWBULLETS
   JSR SETUPOBJECTS
   LDA #20
   STA MIKE1
+
 BEER
-        JSR OPENWINDOWS
-        BCC BOUNC
-        DEC MIKE1
-        BPL BEER
+  JSR @OPENWINDOWS
+  BCC BOUNC
+  DEC MIKE1
+  BPL BEER
+  
 BOUNC
-        JSR HELISFIRE
-        JMP .MMYOU
+  JSR HELISFIRE
+  JMP @MMYOU
+
 HELISFIRE
-        LDA HEACT0
-        CMP #2
+  LDA HEACT0
+  CMP #2
   BEQ HELIS1
   CMP #5
   BEQ HELIS1
   RTS
   
-HELIS1  DEC HELFIRE
+HELIS1
+  DEC HELFIRE
   LDA HELFIRE
   AND #1
   BEQ HELIS2
-HELI3 RTS
+  
+HELI3
+  RTS
 
 HELIS2
-  JSR CHK0
+  JSR @CHK0
   BCS HELI3
   LDX XTEMP
   LDY YTEMP
@@ -74,12 +81,13 @@ HELIS2
   BEQ LFV 
   ;DEX
   ;DEX
-    LDA #3
+  LDA #3
   JMP DSW
-LFV LDA #5
+  LFV LDA #5
   ;INX
   ;INX
-DSW STA DIRECTION
+DSW
+  STA DIRECTION
   INY
   INY
   LDA #1
@@ -88,104 +96,112 @@ DSW STA DIRECTION
   LDX #1
   JSR SOUND
   RTS
-NOBULLETJ JMP NOBULLET
+  
+NOBULLETJ
+  JMP NOBULLET
+  
 HELFIRE !byte 0
-DRAWBULLETS LDX #2
-DSET1          LDA #0
-    STA PHIT,X
-    LDA X,X 
-    LSR ;Implied A
-    LSR ;Implied A
-    SBC #1
-    STA MXMIN,X
-    CLC
-    ADC #2
-    STA MXMAX,X
-          LDA Y,X
-    LSR ;Implied A   
-    LSR ;Implied A
-    LSR ;Implied A
-    SBC #1
-    STA MYMAX,X           
-    SEC
-    SBC #3
-    STA MYMIN,X
-        DEX
-    BPL DSET1
-               LDA MXMIN
-    STA FISTX
-    LDA MYMIN
-    STA FISTY             
-    ;JSR DISPCHAR
-    LDA MXMAX
-    STA FISTX
-    LDA MYMAX
-    STA FISTY
-    ;JSR DISPCHAR
 
+DRAWBULLETS
+  LDX #2
+DSET1
+  LDA #0
+  STA PHIT,X
+  LDA X,X 
+  LSR ;Implied A
+  LSR ;Implied A
+  SBC #1
+  STA MXMIN,X
+  CLC
+  ADC #2
+  STA MXMAX,X
+  LDA Y,X
+  LSR ;Implied A   
+  LSR ;Implied A
+  LSR ;Implied A
+  SBC #1
+  STA MYMAX,X           
+  SEC
+  SBC #3
+  STA MYMIN,X
+  DEX
+  BPL DSET1
+  LDA MXMIN
+  STA FISTX
+  LDA MYMIN
+  STA FISTY             
+  ;JSR DISPCHAR
+  LDA MXMAX
+  STA FISTX
+  LDA MYMAX
+  STA FISTY
+  ;JSR DISPCHAR
+  LDY #31
 
-    LDY #31
-
-.DRAW1
+@DRAW1
   LDA BULL2,Y     ; TYPE
   BEQ NOBULLETJ
+  LDA SCREENTEMP
+  EOR #$C
+  CLC
+  ADC BULL0,Y
+  STA byteSMC+2
+  STA byte3SMC+2
+  LDA BULL1,Y     ; MLOW
+  STA byteSMC+1
+  STA byte3SMC+1
+  LDA BULL3,Y
+  BEQ byteSMC
 
-          LDA SCREENTEMP
-          EOR #$C
-          CLC
-          ADC BULL0,Y
-
-
-          STA byteSMC+2
-          STA byte3SMC+2
-          LDA BULL1,Y     ; MLOW
-          STA byteSMC+1
-          STA byte3SMC+1
-          LDA BULL3,Y
-          BEQ byteSMC
-
-byteSMC     LDA $FFFF
-
-          STA byte1SMC+1
-          LDA #CHARHB
-          ASL byte1SMC+1
-          ROL ;Implied A
-          ASL byte1SMC+1
-          ROL ;Implied A
-          ASL byte1SMC+1
-          ROL ;Implied A
-          STA byte1SMC+2
-          LDA BULL8L,Y
-          STA byte2SMC+1
-          LDA BULL8H,Y
-          STA byte2SMC+2
-          LDX #7
-byte1SMC    LDA $C000,X
-          AND BULLETMASK,X
-          ORA BULLET,X
-byte2SMC    STA $C000,X
-          DEX
-          BPL byte1SMC
-          TYA
-          CLC
-          ADC #220
-byte3SMC    STA $FFFF
-
-CPLAYER1  LDA BULL4,Y
-     CMP MXMIN
-     BCC CPLAYER2
-       CMP MXMAX    
-     BCS CPLAYER2 
+byteSMC
+  LDA $FFFF
+  STA byte1SMC+1
+  LDA #CHARHB
+  ASL byte1SMC+1
+  ROL ;Implied A
+  ASL byte1SMC+1
+  ROL ;Implied A
+  ASL byte1SMC+1
+  ROL ;Implied A
+  STA byte1SMC+2
+  LDA BULL8L,Y
+  STA byte2SMC+1
+  LDA BULL8H,Y
+  STA byte2SMC+2
+  LDX #7
   
-     LDA BULL5,Y
-     CMP MYMIN  ;MYMIN  
-     BCC CPLAYER2
-     CMP MYMAX  ;MYMAX
-     BCS CPLAYER2
-     LDA #1
-     STA PHIT 
-CANCELJ   JMP CANCELBULLET
+byte1SMC
+  LDA $C000,X
+  AND BULLETMASK,X
+  ORA BULLET,X
 
+byte2SMC
+  STA $C000,X
+  DEX
+  BPL byte1SMC
+  TYA
+  CLC
+  ADC #220
+  
+byte3SMC
+  STA $FFFF
+
+CPLAYER1
+  LDA BULL4,Y
+  CMP MXMIN
+  BCC CPLAYER2
+  CMP MXMAX    
+  BCS CPLAYER2 
+  LDA BULL5,Y
+  CMP MYMIN  ;MYMIN  
+  BCC CPLAYER2
+  CMP MYMAX  ;MYMAX
+  BCS CPLAYER2
+  LDA #1
+  STA PHIT 
+
+CANCELJ
+  JMP CANCELBULLET
 
 CPLAYER2
      LDA BULL4,Y
@@ -193,7 +209,7 @@ CPLAYER2
      BCC CPLAYER3
      CMP MXMAX+1
      BCS CPLAYER3
-       LDA BULL5,Y
+     LDA BULL5,Y
      CMP MYMIN+1  
      BCC CPLAYER3
      CMP MYMAX+1  
@@ -202,21 +218,22 @@ CPLAYER2
      STA PHIT+1
      JMP CANCELBULLET
 
-CPLAYER3  LDA BULL4,Y
-     CMP MXMIN+2
-     BCC CPLAYER4
-     CMP MXMAX+2
-     BCS CPLAYER4
-          LDA BULL5,Y
-     CMP MYMIN+2
-     BCC CPLAYER4
-     CMP MYMAX+2  
-     BCS CPLAYER4
-     LDA #1
-     STA PHIT+1
-     JMP CANCELBULLET
+CPLAYER3
+  LDA BULL4,Y
+  CMP MXMIN+2
+  BCC CPLAYER4
+  CMP MXMAX+2
+  BCS CPLAYER4
+  LDA BULL5,Y
+  CMP MYMIN+2
+  BCC CPLAYER4
+  CMP MYMAX+2  
+  BCS CPLAYER4
+  LDA #1
+  STA PHIT+1
+  JMP CANCELBULLET
+  
 CPLAYER4
-
           LDA BULL3,Y     ; DIRECTION
           TAX
           LDA BULL4,Y
@@ -241,35 +258,36 @@ CPLAYER4
           ADC BUDIRECTH,X
           STA BULL0,Y
 
-
-
 NOBULLET
   DEY
   BMI ALDONE
 DRAW1J
-  JMP .DRAW1
+  JMP @DRAW1
 ALDONE
      LDX #2
-NOACTION1 LDA PHIT,X      
-     BEQ NOACTION
-     TXA
-     PHA
-     ;JSR LOSENERGY
-     LDA #2
-     JSR SOUND
-     PLA
-     TAX
-NOACTION  DEX
-     BPL NOACTION1
-          RTS
-
+NOACTION1
+  LDA PHIT,X      
+  BEQ NOACTION
+  TXA
+  PHA
+  ;JSR LOSENERGY
+  LDA #2
+  JSR SOUND
+  PLA
+  TAX
+  
+NOACTION
+  DEX
+  BPL NOACTION1
+  RTS
 
 CANCELBULLET
-          LDA #0
-          STA BULL2,Y
-          DEY
-          BPL DRAW1J
-          BMI ALDONE
+  LDA #0
+  STA BULL2,Y
+  DEY
+  BPL DRAW1J
+  BMI ALDONE
+          
 MANSAVE   !byte 0
 FIRERATE  !byte 0
 .MANFIRE 
@@ -367,9 +385,10 @@ PUTMAN    LDA #8
      ;*
 
 
-DRAWOBJECTS LDY #31
+DRAWOBJECTS
+  LDY #31
 
-.DRAW2
+DRAW2
   LDA OBJ2,Y     ; TYPE
   BEQ DNOBJ
   LDA SCREENTEMP
@@ -386,17 +405,17 @@ DRAWOBJECTS LDY #31
   LDA #$A0
   ADC OBJ3,Y       
 
-DO4SMC     LDX $FFFF
-          CPX #$19
-     BEQ DO3SMC
-     CPX #$E3
-     BEQ DO3SMC
-
-     CPX #$53
-     BCC CANCELOBJ
-     CPX #76
-     BCS CANCELOBJ
-     BNE CANCELOBJ ;;; WRONG
+DO4SMC
+  LDX $FFFF
+  CPX #$19
+  BEQ DO3SMC
+  CPX #$E3
+  BEQ DO3SMC
+  CPX #$53
+  BCC CANCELOBJ
+  CPX #76
+  BCS CANCELOBJ
+  BNE CANCELOBJ ;;; WRONG
 
 DO3SMC
   STA $FFFF
@@ -454,41 +473,44 @@ PUTOBJON
   TAX
   PLA
 SETUPOBJECT
-          ;X Y A=TYPE
-          STX BULLETX
-          STY BULLETY
-          STA BULLETYPE
-          LDY #31
-SW2       LDA OBJ2,Y
-          BEQ GOTSPARE1
-          DEY
-          BPL SW2
-          RTS
+  ;X Y A=TYPE
+  STX BULLETX
+  STY BULLETY
+  STA BULLETYPE
+  LDY #31
+SW2
+  LDA OBJ2,Y
+  BEQ GOTSPARE1
+  DEY
+  BPL SW2
+  RTS
 GOTSPARE1
-          LDA BULLETX
-          STA OBJ4,Y
-          LDA BULLETY
-          STA OBJ5,Y
-          TAX
-          LDA MULT40L,X
-          CLC
-          ADC BULLETX
-          STA OBJ1,Y
-          LDA MULT40H,X
+  LDA BULLETX
+  STA OBJ4,Y
+  LDA BULLETY
+  STA OBJ5,Y
+  TAX
+  LDA MULT40L,X
+  CLC
+  ADC BULLETX
+  STA OBJ1,Y
+  LDA MULT40H,X
+  ADC #0
+  STA OBJ0,Y
+  LDA BULLETYPE
+  STA OBJ2,Y
+  LDA #0
+  STA OBJ3,Y
+  RTS
 
-
-          ADC #0
-          STA OBJ0,Y
-          LDA BULLETYPE
-          STA OBJ2,Y
-     LDA #0
-     STA OBJ3,Y
-          RTS
-
-MXMAX DS 3
-MYMAX   DS 3
-MXMIN  DS 3
-MYMIN  DS 3
+MXMAX
+  !fill 3
+MYMAX
+  !fill 3
+MXMIN
+  !fill 3
+MYMIN
+  !fill 3
 WINDOW1   !byte 0
 WINDOWCOUNT !byte 0
 OBJECTPOINT !byte 0
@@ -503,36 +525,29 @@ BUDIRECTH !byte <-40,<-39,<1,<41,<40,<39,<-1,<-41,0
 BULXDIR   !byte 0,1,1,1,0,-1,-1,-1,0
 BULYDIR   !byte -1,-1,0,1,1,1,0,-1,0
 
-
-
-
-
-
-
 BULLETMEM ; MEM
           ; DIR,TYPE,X,Y,TPOS
-  
-  
+    
 
 BULLETWIPE
-BULL0     !fill 32       ; MEM HIGH
-BULL1     !fill 32   ; MEM LOW
-BULL2     !fill 32     ; TYPE
-BULL3     !fill 32     ; DIRECTION
+BULL0     !fill 32 ; MEM HIGH
+BULL1     !fill 32 ; MEM LOW
+BULL2     !fill 32 ; TYPE
+BULL3     !fill 32 ; DIRECTION
 BULL4     !fill 32 ; XPOS
-BULL5     !fill 32   ; YPOS
-BULL6     !fill 32       ; TPOS
-BULL7     !fill 32       ; CHAR
+BULL5     !fill 32 ; YPOS
+BULL6     !fill 32 ; TPOS
+BULL7     !fill 32 ; CHAR
 
 OBJECTWIPE
-OBJ0      !fill 32       ; MEM HIGH
-OBJ1      !fill 32   ; MEM LOW
-OBJ2      !fill 32     ; TYPE
-OBJ3      !fill 32     ; DIRECTION
+OBJ0      !fill 32 ; MEM HIGH
+OBJ1      !fill 32 ; MEM LOW
+OBJ2      !fill 32 ; TYPE
+OBJ3      !fill 32 ; DIRECTION
 OBJ4      !fill 32 ; XPOS
-OBJ5      !fill 32   ; YPOS
-OBJ6      !fill 32       ; TPOS
-OBJ7      !fill 32       ; CHAR
+OBJ5      !fill 32 ; YPOS
+OBJ6      !fill 32 ; TPOS
+OBJ7      !fill 32 ; CHAR
 
 BUILDTYPE  !fill 8,$FF
 BUILDWIDE  !fill 8,$FF 
@@ -542,7 +557,6 @@ BUILDDUST  !fill 8,$FF
   
 
 BULL8H
-
           !byte <((0*8)+CBASE)
           !byte <((1*8)+CBASE)
           !byte <((2*8)+CBASE)
@@ -630,102 +644,106 @@ BULLET
           !byte %00000000
 
 OBJECTSTART
-BULLETCHARS !byte $FE               ; BULLET 0
-          !byte $FE            ; GRENADE 1
-          !byte $CD          ; BONUS 0TURKEY
-          !byte $CE          ; BONUS 1BULBOFF
-          !byte $C2          ; BONUS 2MILK
-          !byte $C3          ; BONUS 3SAFE
-          !byte $C4          ; BONUS 4MONEY
-          !byte $C5          ; BONUS 5TV
-          !byte $C5          ; POT
-          !byte $CF          ; DANGER 0BULB ON
-          !byte $D0          ; DANGER 1CACTUS
-          !byte $A0          ; DANGER 2
-          !byte $A1          ; DANGER 3
-          !byte $A2          ; DANGER 4
-          !byte $A3          ; DANGER 5
-          !byte $A4          ; MAN 0
-          !byte $A1          ; MAN 1
-          !byte $A2          ; MAN 2
-          !byte $A3          ; MAN 3
-          !byte $A4          ; MAN 4
-          !byte $A5          ; MAN 5
-          !byte $A6          ; MAN 6
-          !byte $A7          ; MAN 7
-          !byte $FF    ; END OF LIST   
+
+BULLETCHARS
+  !byte $FE ; BULLET 0
+  !byte $FE ; GRENADE 1
+  !byte $CD ; BONUS 0TURKEY
+  !byte $CE ; BONUS 1BULBOFF
+  !byte $C2 ; BONUS 2MILK
+  !byte $C3 ; BONUS 3SAFE
+  !byte $C4 ; BONUS 4MONEY
+  !byte $C5 ; BONUS 5TV
+  !byte $C5 ; POT
+  !byte $CF ; DANGER 0BULB ON
+  !byte $D0 ; DANGER 1CACTUS
+  !byte $A0 ; DANGER 2
+  !byte $A1 ; DANGER 3
+  !byte $A2 ; DANGER 4
+  !byte $A3 ; DANGER 5
+  !byte $A4 ; MAN 0
+  !byte $A1 ; MAN 1
+  !byte $A2 ; MAN 2
+  !byte $A3 ; MAN 3
+  !byte $A4 ; MAN 4
+  !byte $A5 ; MAN 5
+  !byte $A6 ; MAN 6
+  !byte $A7 ; MAN 7
+  !byte $FF ; END OF LIST   
+
 OBJECTEND
-    !byte $FF
-    !byte $FF
+  !byte $FF
+  !byte $FF
+
 MULT40L
-          !byte >0*40
-          !byte >1*40
-          !byte >2*40
-          !byte >3*40
-          !byte >4*40
-          !byte >5*40
-          !byte >6*40
-          !byte >7*40
-          !byte >8*40
-          !byte >9*40
-          !byte >10*40
-          !byte >11*40
-          !byte >12*40
-          !byte >13*40
+  !word >0*40
+  !word >1*40
+  !word >2*40
+  !word >3*40
+  !word >4*40
+  !word >5*40
+  !word >6*40
+  !word >7*40
+  !word >8*40
+  !word >9*40
+  !word >10*40
+  !word >11*40
+  !word >12*40
+  !word >13*40
+  !word >14*40
+  !word >15*40
+  !word >16*40
+  !word >17*40
+  !word >18*40
+  !word >19*40
+  !word >20*40
+  !word >21*40
+  !word >22*40
+  !word >23*40
+  !word >24*40
+  !word >25*40
 
-          !byte >14*40
-          !byte >15*40
-          !byte >16*40
-          !byte >17*40
-          !byte >18*40
-          !byte >19*40
-          !byte >20*40
-          !byte >21*40
-          !byte >22*40
-          !byte >23*40
-          !byte >24*40
-          !byte >25*40
-MULT40H   !byte <0*40
-          !byte <1*40
-          !byte <2*40
-          !byte <3*40
-          !byte <4*40
-          !byte <5*40
-          !byte <6*40
-          !byte <7*40
-          !byte <8*40
-          !byte <9*40
-          !byte <10*40
-          !byte <11*40
-          !byte <12*40
-          !byte <13*40
-          !byte <14*40
-          !byte <15*40
-          !byte <16*40
-          !byte <17*40
-          !byte <18*40
-          !byte <19*40
-          !byte <20*40
-          !byte <21*40
-          !byte <22*40
-          !byte <23*40
-          !byte <24*40
-          !byte <25*40
-
+MULT40H
+  !word <0*40
+  !word <1*40
+  !word <2*40
+  !word <3*40
+  !word <4*40
+  !word <5*40
+  !word <6*40
+  !word <7*40
+  !word <8*40
+  !word <9*40
+  !word <10*40
+  !word <11*40
+  !word <12*40
+  !word <13*40
+  !word <14*40
+  !word <15*40
+  !word <16*40
+  !word <17*40
+  !word <18*40
+  !word <19*40
+  !word <20*40
+  !word <21*40
+  !word <22*40
+  !word <23*40
+  !word <24*40
+  !word <25*40
 
 BXPOINT
-  DW BXS0,BXS1,BXS2,BXS3,BXS4
-  DW BXS5,BXS6,BXS7,BXS8,BXS9
-  DW BXS10,BXS11,BXS12,BXS13
-  DW BXS14,BXS15,BXS16,BXS17
-  DW BXS18,BXS19,BXS0,BXS0
+  !word BXS0,BXS1,BXS2,BXS3,BXS4
+  !word BXS5,BXS6,BXS7,BXS8,BXS9
+  !word BXS10,BXS11,BXS12,BXS13
+  !word BXS14,BXS15,BXS16,BXS17
+  !word BXS18,BXS19,BXS0,BXS0
 
 TYPOINT
-  DW BTYPE0,BTYPE1,BTYPE2,BTYPE3  
-  DW BTYPE4,BTYPE5,BTYPE6,BTYPE7
-  DW BTYPE8,BTYPE9,BTYPE10,BTYPE11
-  DW BTYPE12,BTYPE13,BTYPE14,BTYPE15
-  DW BTYPE16,BTYPE17,BTYPE18,BTYPE19,BTYPE20,BTYPE20
+  !word BTYPE0,BTYPE1,BTYPE2,BTYPE3  
+  !word BTYPE4,BTYPE5,BTYPE6,BTYPE7
+  !word BTYPE8,BTYPE9,BTYPE10,BTYPE11
+  !word BTYPE12,BTYPE13,BTYPE14,BTYPE15
+  !word BTYPE16,BTYPE17,BTYPE18,BTYPE19,BTYPE20,BTYPE20
     ; BUILDING X'S
 
 BXS0    !byte 10,4,26

@@ -2,6 +2,10 @@
 
 ;*=$0801 
 
+!macro NOPP
+  !byte $2C
+!end
+
 ;!byte    $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096       ;basic loader
 
 ;MUSIC          = $200  ;to $B00
@@ -75,9 +79,7 @@ SCBACKPOINT
 
 STATUS  !byte 0
 
-!ZONE BUILD
-
-NODEM
+@NODEM
         LDA #0
         STA STEMP
         LDY RILY
@@ -172,9 +174,11 @@ INI1    INC SCREEN
         JSR SIDWIPE
         JSR SCREENWIPE
         RTS     
-FOUND   INC $D020
-        JMP FOUND
-DRAWBUILD
+@FOUND
+  INC $D020
+  JMP @FOUND
+  
+@DRAWBUILD
         LDA FIRE+2
         BEQ NONK        
         LDA #AEAT
@@ -233,152 +237,158 @@ FLIPSCREEN
 
 COPYCOL1
         LDY #39
-COPYCOL
-        LDX TEMPCOL((24*40),Y)
+        
+@COPYCOL
+        LDX TEMPCOL+(24*40),Y
         LDA COLMEM,X
-        STA NYBBLE((24*40),Y)
-        LDX TEMPCOL((23*40),Y)
+        STA NYBBLE+(24*40),Y
+        LDX TEMPCOL+(23*40),Y
         LDA COLMEM,X
-        STA NYBBLE((23*40),Y)
-        LDX TEMPCOL((22*40),Y)
+        STA NYBBLE+(23*40),Y
+        LDX TEMPCOL+(22*40),Y
         LDA COLMEM,X
-        STA NYBBLE((22*40),Y)
-
-        LDX TEMPCOL((21*40),Y)
+        STA NYBBLE+(22*40),Y
+        LDX TEMPCOL+(21*40),Y
         LDA COLMEM,X
-        STA NYBBLE((21*40),Y)
-        LDX TEMPCOL((20*40),Y)
+        STA NYBBLE+(21*40),Y
+        LDX TEMPCOL+(20*40),Y
         LDA COLMEM,X
-        STA NYBBLE((20*40),Y)
-        LDX TEMPCOL((19*40),Y)
+        STA NYBBLE+(20*40),Y
+        LDX TEMPCOL+(19*40),Y
         LDA COLMEM,X
-        STA NYBBLE((19*40),Y)
-        LDX TEMPCOL((18*40),Y)
+        STA NYBBLE+(19*40),Y
+        LDX TEMPCOL+(18*40),Y
         LDA COLMEM,X
-        STA NYBBLE((18*40),Y)
-        LDX TEMPCOL((17*40),Y)
+        STA NYBBLE+(18*40),Y
+        LDX TEMPCOL+(17*40),Y
         LDA COLMEM,X
-        STA NYBBLE((17*40),Y)
-        LDX TEMPCOL((16*40),Y)
+        STA NYBBLE+(17*40),Y
+        LDX TEMPCOL+(16*40),Y
         LDA COLMEM,X
-        STA NYBBLE((16*40),Y)
-        LDX TEMPCOL((15*40),Y)
+        STA NYBBLE+(16*40),Y
+        LDX TEMPCOL+(15*40),Y
         LDA COLMEM,X
-        STA NYBBLE((15*40),Y)
-        LDX TEMPCOL((14*40),Y)
+        STA NYBBLE+(15*40),Y
+        LDX TEMPCOL+(14*40),Y
         LDA COLMEM,X
-        STA NYBBLE((14*40),Y)
-        LDX TEMPCOL((13*40),Y)
+        STA NYBBLE+(14*40),Y
+        LDX TEMPCOL+(13*40),Y
         LDA COLMEM,X
-        STA NYBBLE((13*40),Y)
-        LDX TEMPCOL((12*40),Y)
+        STA NYBBLE+(13*40),Y
+        LDX TEMPCOL+(12*40),Y
         LDA COLMEM,X
-        STA NYBBLE((12*40),Y)
-        LDX TEMPCOL((11*40),Y)
+        STA NYBBLE+(12*40),Y
+        LDX TEMPCOL+(11*40),Y
         LDA COLMEM,X
-        STA NYBBLE((11*40),Y)
-        LDX TEMPCOL((10*40),Y)
+        STA NYBBLE+(11*40),Y
+        LDX TEMPCOL+(10*40),Y
         LDA COLMEM,X            
-        STA NYBBLE((10*40),Y)
-        LDX TEMPCOL((09*40),Y)
+        STA NYBBLE+(10*40),Y
+        LDX TEMPCOL+(09*40),Y
         LDA COLMEM,X
-        STA NYBBLE((09*40),Y)
-        LDX TEMPCOL((08*40),Y)
+        STA NYBBLE+(09*40),Y
+        LDX TEMPCOL+(08*40),Y
         LDA COLMEM,X
-        STA NYBBLE((08*40),Y)
-        LDX TEMPCOL((07*40),Y)
+        STA NYBBLE+(08*40),Y
+        LDX TEMPCOL+(07*40),Y
         LDA COLMEM,X
-        STA NYBBLE((07*40),Y)
-        LDX TEMPCOL((06*40),Y)
+        STA NYBBLE+(07*40),Y
+        LDX TEMPCOL+(06*40),Y
         LDA COLMEM,X
-        STA NYBBLE((06*40),Y)
-        LDX TEMPCOL((05*40),Y)
+        STA NYBBLE+(06*40),Y
+        LDX TEMPCOL+(05*40),Y
         LDA COLMEM,X
-        STA NYBBLE((05*40),Y)
-        LDX TEMPCOL((4*40),Y)
+        STA NYBBLE+(05*40),Y
+        LDX TEMPCOL+(4*40),Y
         LDA COLMEM,X
-        STA NYBBLE((4*40),Y)
+        STA NYBBLE+(4*40),Y
         DEY
         BMI COPOUT1
-        JMP COPYCOL
+        JMP @COPYCOL
 COPOUT1 RTS
 
 
 
 COPYCOL2
         LDY #39
+        
 COPYCOLR2
-       LDX TEMPCOL1((24*40),Y)
+       LDX TEMPCOL1+(24*40),Y
         LDA COLMEM,X
-        STA NYBBLE((24*40),Y)
-        LDX TEMPCOL1((23*40),Y)
+        STA NYBBLE+(24*40),Y
+        LDX TEMPCOL1+(23*40),Y
         LDA COLMEM,X
-        STA NYBBLE((23*40),Y)
-        LDX TEMPCOL1((22*40),Y)
+        STA NYBBLE+(23*40),Y
+        LDX TEMPCOL1+(22*40),Y
         LDA COLMEM,X
-        STA NYBBLE((22*40),Y)
-        LDX TEMPCOL((21*40),Y)
+        STA NYBBLE+(22*40),Y
+        LDX TEMPCOL+(21*40),Y
         LDA COLMEM,X
-        STA NYBBLE((21*40),Y)
-        LDX TEMPCOL1((20*40),Y)
+        STA NYBBLE+(21*40),Y
+        LDX TEMPCOL1+(20*40),Y
         LDA COLMEM,X
-        STA NYBBLE((20*40),Y)
-        LDX TEMPCOL1((19*40),Y)
+        STA NYBBLE+(20*40),Y
+        LDX TEMPCOL1+(19*40),Y
         LDA COLMEM,X
-        STA NYBBLE((19*40),Y)
-        LDX TEMPCOL1((18*40),Y)
+        STA NYBBLE+(19*40),Y
+        LDX TEMPCOL1+(18*40),Y
         LDA COLMEM,X
-        STA NYBBLE((18*40),Y)
-        LDX TEMPCOL1((17*40),Y)
+        STA NYBBLE+(18*40),Y
+        LDX TEMPCOL1+(17*40),Y
         LDA COLMEM,X
-        STA NYBBLE((17*40),Y)
-        LDX TEMPCOL1((16*40),Y)
+        STA NYBBLE+(17*40),Y
+        LDX TEMPCOL1+(16*40),Y
         LDA COLMEM,X
-        STA NYBBLE((16*40),Y)
-        LDX TEMPCOL1((15*40),Y)
+        STA NYBBLE+(16*40),Y
+        LDX TEMPCOL1+(15*40),Y
         LDA COLMEM,X
-        STA NYBBLE((15*40),Y)
-        LDX TEMPCOL1((14*40),Y)
+        STA NYBBLE+(15*40),Y
+        LDX TEMPCOL1+(14*40),Y
         LDA COLMEM,X
-        STA NYBBLE((14*40),Y)
-        LDX TEMPCOL1((13*40),Y)
+        STA NYBBLE+(14*40),Y
+        LDX TEMPCOL1+(13*40),Y
         LDA COLMEM,X
-        STA NYBBLE((13*40),Y)
-        LDX TEMPCOL1((12*40),Y)
+        STA NYBBLE+(13*40),Y
+        LDX TEMPCOL1+(12*40),Y
         LDA COLMEM,X
-        STA NYBBLE((12*40),Y)
-        LDX TEMPCOL1((11*40),Y)
+        STA NYBBLE+(12*40),Y
+        LDX TEMPCOL1+(11*40),Y
         LDA COLMEM,X
-        STA NYBBLE((11*40),Y)
-        LDX TEMPCOL1((10*40),Y)
+        STA NYBBLE+(11*40),Y
+        LDX TEMPCOL1+(10*40),Y
         LDA COLMEM,X            
-        STA NYBBLE((10*40),Y)
-        LDX TEMPCOL1((09*40),Y)
+        STA NYBBLE+(10*40),Y
+        LDX TEMPCOL1+(09*40),Y
         LDA COLMEM,X
-        STA NYBBLE((09*40),Y)
-        LDX TEMPCOL1((08*40),Y)
+        STA NYBBLE+(09*40),Y
+        LDX TEMPCOL1+(08*40),Y
         LDA COLMEM,X
-        STA NYBBLE((08*40),Y)
-        LDX TEMPCOL1((07*40),Y)
+        STA NYBBLE+(08*40),Y
+        LDX TEMPCOL1+(07*40),Y
         LDA COLMEM,X
-        STA NYBBLE((07*40),Y)
-        LDX TEMPCOL1((06*40),Y)
+        STA NYBBLE+(07*40),Y
+        LDX TEMPCOL1+(06*40),Y
         LDA COLMEM,X
-        STA NYBBLE((06*40),Y)
-        LDX TEMPCOL1((05*40),Y)
+        STA NYBBLE+(06*40),Y
+        LDX TEMPCOL1+(05*40),Y
         LDA COLMEM,X
-        STA NYBBLE((05*40),Y)
-        LDX TEMPCOL1((04*40),Y)
+        STA NYBBLE+(05*40),Y
+        LDX TEMPCOL1+(04*40),Y
         LDA COLMEM,X
-        STA NYBBLE((04*40),Y)
+        STA NYBBLE+(04*40),Y
         DEY
         BMI COPYCOLR3
         JMP COPYCOLR2
-COPYCOLR3       RTS
-CRACKUP
+
+COPYCOLR3
+  RTS
+
+@CRACKUP
+
 BUILDCRACK
-        TAX
-        PHA
+  TAX
+  PHA
+  
 BCRAK   LDA BUILDMAPLB,X
         STA CRACK+1
         STA CRACK1+1
@@ -446,7 +456,7 @@ SMCBX   LDA $FFFF,Y   ;SMODIFIDED
         STA SBXEND,Y
         LDA SBTOPTAB,X
         STA SBTOP,Y
-        LDA DR=IRED,X
+        LDA DREQUIRED,X
         STA SDAMAGE,Y
         LDA IMTIRED
         TAX
@@ -515,9 +525,9 @@ BLPOINT LDA $FFFF
         STA DEFPOINT+1
         LDA #0          ;<(BLSTART/4)
         ASL DEFPOINT+1
-        ROL A
+        ROL ;Implied A
         ASL DEFPOINT+1
-        ROL A
+        ROL ;Implied A
         STA DEFPOINT+2
         LDA DEFPOINT+1
         CLC
@@ -587,176 +597,181 @@ SPEED2  CLC
 SPEED1  DEC COUNT2
         BPL TLOOP
         RTS
-DMOUNTSJ        JMP DMOUNTS
+DMOUNTSJ
+  JMP DMOUNTS
 BACKDROPDRAW
-        LDA SCREEN
-        AND #15
-        TAY
-        LDA SCBACKPOINT,Y
-        TAY
-        
-        LDA SCREEN
-        AND #4
-        BEQ DMOUNTSJ
-        LDX SCREENTEMP
-        CPX #$F4
-        BEQ BACKD1
-        JMP BACKD2
+  LDA SCREEN
+  AND #15
+  TAY
+  LDA SCBACKPOINT,Y
+  TAY
+  LDA SCREEN
+  AND #4
+  BEQ DMOUNTSJ
+  LDX SCREENTEMP
+  CPX #$F4
+  BEQ BACKD1
+  JMP BACKD2
 
-BACKD1  LDX #39
+BACKD1
+  LDX #39
 COPYLOOP
-        LDA BACKDROP((BW*00),Y)
-        STA $F400((40*00),X)
-        LDA BACKDROP((BW*01),Y)
-        STA $F400((40*01),X)
-        LDA BACKDROP((BW*02),Y)
-        STA $F400((40*02),X)
-        LDA BACKDROP((BW*03),Y)
-        STA $F400((40*03),X)
-        LDA BACKDROP((BW*04),Y)
-        STA $F400((40*04),X)
-        LDA BACKDROP((BW*05),Y)
-        STA $F400((40*05),X)
-        LDA BACKDROP((BW*06),Y)
-        STA $F400((40*06),X)
-        LDA BACKDROP((BW*07),Y)
-        STA $F400((40*07),X)
-        LDA BACKDROP((BW*08),Y)
-        STA $F400((40*08),X)
-        LDA BACKDROP((BW*09),Y)
-        STA $F400((40*09),X)
-        LDA BACKDROP((BW*10),Y)
-        STA $F400((40*10),X)
-        LDA BACKDROP((BW*11),Y)
-        STA $F400((40*11),X)
-        LDA BACKDROP((BW*12),Y)
-        STA $F400((40*12),X)
-        LDA #0
-        STA $F400((40*13),X)
-        STA $F400((40*14),X)
-        STA $F400((40*15),X)
-        STA $F400((40*16),X)
-        STA $F400((40*17),X)
-        STA $F400((40*18),X)
-        STA $F400((40*19),X)
-        LDA BACKDROP((BW*20),Y)
-        STA $F400((40*20),X)
-        LDA BACKDROP((BW*21),Y)
-        STA $F400((40*21),X)
-        LDA BACKDROP((BW*22),Y)
-        STA $F400((40*22),X)
-        LDA BACKDROP((BW*23),X)
-        STA $F400((40*23),X)
-        LDA BACKDROP((BW*24),X)
-        STA $F400((40*24),X)
-        DEY
-        DEX
-        BMI COPYED
-        JMP COPYLOOP
-COPYED  RTS
+  LDA BACKDROP+(BW*00),Y
+  STA $F400+(40*00),X
+  LDA BACKDROP+(BW*01),Y
+  STA $F400+(40*01),X
+  LDA BACKDROP+(BW*02),Y
+  STA $F400+(40*02),X
+  LDA BACKDROP+(BW*03),Y
+  STA $F400+(40*03),X
+  LDA BACKDROP+(BW*04),Y
+  STA $F400+(40*04),X
+  LDA BACKDROP+(BW*05),Y
+  STA $F400+(40*05),X
+  LDA BACKDROP+(BW*06),Y
+  STA $F400+(40*06),X
+  LDA BACKDROP+(BW*07),Y
+  STA $F400+(40*07),X
+  LDA BACKDROP+(BW*08),Y
+  STA $F400+(40*08),X
+  LDA BACKDROP+(BW*09),Y
+  STA $F400+(40*09),X
+  LDA BACKDROP+(BW*10),Y
+  STA $F400+(40*10),X
+  LDA BACKDROP+(BW*11),Y
+  STA $F400+(40*11),X
+  LDA BACKDROP+(BW*12),Y
+  STA $F400+(40*12),X
+  LDA #0
+  STA $F400+(40*13),X
+  STA $F400+(40*14),X
+  STA $F400+(40*15),X
+  STA $F400+(40*16),X
+  STA $F400+(40*17),X
+  STA $F400+(40*18),X
+  STA $F400+(40*19),X
+  LDA BACKDROP+(BW*20),Y
+  STA $F400+(40*20),X
+  LDA BACKDROP+(BW*21),Y
+  STA $F400+(40*21),X
+  LDA BACKDROP+(BW*22),Y
+  STA $F400+(40*22),X
+  LDA BACKDROP+(BW*23),X
+  STA $F400+(40*23),X
+  LDA BACKDROP+(BW*24),X
+  STA $F400+(40*24),X
+  DEY
+  DEX
+  BMI COPYED
+  JMP COPYLOOP
+COPYED
+  RTS
 
-BACKD2  LDX #39
+BACKD2
+  LDX #39
 COPYLOOP1
-        LDA BACKDROP((BW*00),Y)
-        STA $F800((40*00),X)
-        LDA BACKDROP((BW*01),Y)
-        STA $F800((40*01),X)
-        LDA BACKDROP((BW*02),Y)
-        STA $F800((40*02),X)
-        LDA BACKDROP((BW*03),Y)
-        STA $F800((40*03),X)
-        LDA BACKDROP((BW*04),Y)
-        STA $F800((40*04),X)
-        LDA BACKDROP((BW*05),Y)
-        STA $F800((40*05),X)
-        LDA BACKDROP((BW*06),Y)
-        STA $F800((40*06),X)
-        LDA BACKDROP((BW*07),Y)
-        STA $F800((40*07),X)
-        LDA BACKDROP((BW*08),Y)
-        STA $F800((40*08),X)
-        LDA BACKDROP((BW*09),Y)
-        STA $F800((40*09),X)
-        LDA BACKDROP((BW*10),Y)
-        STA $F800((40*10),X)
-        LDA BACKDROP((BW*11),Y)
-        STA $F800((40*11),X)
-        LDA BACKDROP((BW*12),Y)
-        STA $F800((40*12),X)
-        LDA BACKDROP((BW*13),Y)
-        LDA #0
-        STA $F800((40*13),X)
-        STA $F800((40*14),X)
-        STA $F800((40*15),X)
-        STA $F800((40*16),X)
-        STA $F800((40*17),X)
-        STA $F800((40*18),X)
-        STA $F800((40*19),X)
-        LDA BACKDROP((BW*20),Y)
-        STA $F800((40*20),X)
-        LDA BACKDROP((BW*21),Y)
-        STA $F800((40*21),X)
-        LDA BACKDROP((BW*22),Y)
-        STA $F800((40*22),X)
-        LDA BACKDROP((BW*23),X)
-        STA $F800((40*23),X)
-        LDA BACKDROP((BW*24),X)
-        STA $F800((40*24),X)
-        DEY
-        DEX
-        BMI COPYED1
-        JMP COPYLOOP1
-COPYED1 RTS
-MOUNT = BACKDROP(BW*13)
+  LDA BACKDROP+(BW*00),Y
+  STA $F800+(40*00),X
+  LDA BACKDROP+(BW*01),Y
+  STA $F800+(40*01),X
+  LDA BACKDROP+(BW*02),Y
+  STA $F800+(40*02),X
+  LDA BACKDROP+(BW*03),Y
+  STA $F800+(40*03),X
+  LDA BACKDROP+(BW*04),Y
+  STA $F800+(40*04),X
+  LDA BACKDROP+(BW*05),Y
+  STA $F800+(40*05),X
+  LDA BACKDROP+(BW*06),Y
+  STA $F800+(40*06),X
+  LDA BACKDROP+(BW*07),Y
+  STA $F800+(40*07),X
+  LDA BACKDROP+(BW*08),Y
+  STA $F800+(40*08),X
+  LDA BACKDROP+(BW*09),Y
+  STA $F800+(40*09),X
+  LDA BACKDROP+(BW*10),Y
+  STA $F800+(40*10),X
+  LDA BACKDROP+(BW*11),Y
+  STA $F800+(40*11),X
+  LDA BACKDROP+(BW*12),Y
+  STA $F800+(40*12),X
+  LDA BACKDROP+(BW*13),Y
+  LDA #0
+  STA $F800+(40*13),X
+  STA $F800+(40*14),X
+  STA $F800+(40*15),X
+  STA $F800+(40*16),X
+  STA $F800+(40*17),X
+  STA $F800+(40*18),X
+  STA $F800+(40*19),X
+  LDA BACKDROP+(BW*20),Y
+  STA $F800+(40*20),X
+  LDA BACKDROP+(BW*21),Y
+  STA $F800+(40*21),X
+  LDA BACKDROP+(BW*22),Y
+  STA $F800+(40*22),X
+  LDA BACKDROP+(BW*23),X
+  STA $F800+(40*23),X
+  LDA BACKDROP+(BW*24),X
+  STA $F800+(40*24),X
+  DEY
+  DEX
+  BMI COPYED1
+  JMP COPYLOOP1
+COPYED1
+  RTS
+
+MOUNT = BACKDROP+(BW*13)
+
 DMOUNTS
-        LDA SCREENTEMP
-        CMP #$F8
-        BEQ DMOUNTS1
+  LDA SCREENTEMP
+  CMP #$F8
+  BEQ DMOUNTS1
+  LDX #39
 
-
-      LDX #39
-
-MOUNT1  LDA MOUNT((BW*0),Y)
-        STA $F400((40*3),X)
-        LDA MOUNT((BW*1),Y)
-        STA $F400((40*4),X)
-        LDA MOUNT((BW*2),Y)
-        STA $F400((40*5),X)
-        LDA MOUNT((BW*3),Y)
-        STA $F400((40*6),X)
-        LDA MOUNT((BW*4),Y)
-        STA $F400((40*7),X)
-        LDA MOUNT((BW*5),Y)
-        STA $F400((40*8),X)
+MOUNT1
+  LDA MOUNT+(BW*0),Y
+        STA $F400+(40*3),X
+        LDA MOUNT+(BW*1),Y
+        STA $F400+(40*4),X
+        LDA MOUNT+(BW*2),Y
+        STA $F400+(40*5),X
+        LDA MOUNT+(BW*3),Y
+        STA $F400+(40*6),X
+        LDA MOUNT+(BW*4),Y
+        STA $F400+(40*7),X
+        LDA MOUNT+(BW*5),Y
+        STA $F400+(40*8),X
         LDA #1
-        STA $F400((40*0),X)
-        STA $F400((40*1),X)
-        STA $F400((40*2),X)
+        STA $F400+(40*0),X
+        STA $F400+(40*1),X
+        STA $F400+(40*2),X
         LDA #0
-        STA $F400((40*09),X)
-        STA $F400((40*10),X)
-        STA $F400((40*11),X)
-        STA $F400((40*11),X)
-        STA $F400((40*12),X)
-        STA $F400((40*13),X)
-        STA $F400((40*14),X)
-        STA $F400((40*15),X)
-        STA $F400((40*16),X)
-        STA $F400((40*17),X)
+        STA $F400+(40*09),X
+        STA $F400+(40*10),X
+        STA $F400+(40*11),X
+        STA $F400+(40*11),X
+        STA $F400+(40*12),X
+        STA $F400+(40*13),X
+        STA $F400+(40*14),X
+        STA $F400+(40*15),X
+        STA $F400+(40*16),X
+        STA $F400+(40*17),X
         ;LDA BACKDROP+(BW*18),Y
-        STA $F400((40*18),X)
-        LDA BACKDROP((BW*19),Y)
-        STA $F400((40*19),X)
-        LDA BACKDROP((BW*20),Y)
-        STA $F400((40*20),X)
-        LDA BACKDROP((BW*21),Y)
-        STA $F400((40*21),X)
-        LDA BACKDROP((BW*22),Y)
-        STA $F400((40*22),X)
-        LDA BACKDROP((BW*23),X)
-        STA $F400((40*23),X)
-        LDA BACKDROP((BW*24),X)
-        STA $F400((40*24),X)
+        STA $F400+(40*18),X
+        LDA BACKDROP+(BW*19),Y
+        STA $F400+(40*19),X
+        LDA BACKDROP+(BW*20),Y
+        STA $F400+(40*20),X
+        LDA BACKDROP+(BW*21),Y
+        STA $F400+(40*21),X
+        LDA BACKDROP+(BW*22),Y
+        STA $F400+(40*22),X
+        LDA BACKDROP+(BW*23),X
+        STA $F400+(40*23),X
+        LDA BACKDROP+(BW*24),X
+        STA $F400+(40*24),X
         DEY
         DEX
         BPL MOUNT1      
@@ -766,131 +781,124 @@ DMOUNTS1
 
       LDX #39
         
-MOUNT2  LDA MOUNT((BW*00),Y)   
-        STA $F800((40*03),X)
-        LDA MOUNT((BW*01),Y)    
-        STA $F800((40*04),X)
-        LDA MOUNT((BW*02),Y)
-        STA $F800((40*05),X)
-        LDA MOUNT((BW*03),Y)
-        STA $F800((40*06),X)
-        LDA MOUNT((BW*04),Y)
-        STA $F800((40*07),X)
-        LDA MOUNT((BW*05),Y)
-        STA $F800((40*08),X)
+MOUNT2  LDA MOUNT+(BW*00),Y 
+        STA $F800+(40*03),X
+        LDA MOUNT+(BW*01),Y  
+        STA $F800+(40*04),X
+        LDA MOUNT+(BW*02),Y
+        STA $F800+(40*05),X
+        LDA MOUNT+(BW*03),Y
+        STA $F800+(40*06),X
+        LDA MOUNT+(BW*04),Y
+        STA $F800+(40*07),X
+        LDA MOUNT+(BW*05),Y
+        STA $F800+(40*08),X
         LDA #1
-        STA $F800((40*0),X)
-        STA $F800((40*1),X)
-        STA $F800((40*2),X)
+        STA $F800+(40*0),X
+        STA $F800+(40*1),X
+        STA $F800+(40*2),X
         LDA #0
-        STA $F800((40*09),X)
-        STA $F800((40*10),X)
-        STA $F800((40*11),X)
-        STA $F800((40*12),X)
-        STA $F800((40*13),X)
-        STA $F800((40*14),X)
-        STA $F800((40*15),X)
-        STA $F800((40*16),X)
-        STA $F800((40*17),X)
+        STA $F800+(40*09),X
+        STA $F800+(40*10),X
+        STA $F800+(40*11),X
+        STA $F800+(40*12),X
+        STA $F800+(40*13),X
+        STA $F800+(40*14),X
+        STA $F800+(40*15),X
+        STA $F800+(40*16),X
+        STA $F800+(40*17),X
         ;LDA BACKDROP+(BW*18),Y
-        STA $F800((40*18),X)
-        LDA BACKDROP((BW*19),Y)
-        STA $F800((40*19),X)
-        LDA BACKDROP((BW*20),Y)
-        STA $F800((40*20),X)
-        LDA BACKDROP((BW*21),Y)
-        STA $F800((40*21),X)
-        LDA BACKDROP((BW*22),Y)
-        STA $F800((40*22),X)
-        LDA BACKDROP((BW*23),X)
-        STA $F800((40*23),X)
-        LDA BACKDROP((BW*24),X)
-        STA $F800((40*24),X)
+        STA $F800+(40*18),X
+        LDA BACKDROP+(BW*19),Y
+        STA $F800+(40*19),X
+        LDA BACKDROP+(BW*20),Y
+        STA $F800+(40*20),X
+        LDA BACKDROP+(BW*21),Y
+        STA $F800+(40*21),X
+        LDA BACKDROP+(BW*22),Y
+        STA $F800+(40*22),X
+        LDA BACKDROP+(BW*23),X
+        STA $F800+(40*23),X
+        LDA BACKDROP+(BW*24),X
+        STA $F800+(40*24),X
         DEY
         DEX     
         BPL MOUNT2
         RTS
 
+@DRAWWATER
+  LDY WATERPOINT
+  BMI NODRAW
+  ;JSR WATERPROCES
+  LDA WATERTABLE,Y
+  TAY
+  LDX #0
 
+DW1
+  LDA BACKDROP+(BW*24),Y
+  STA $F400+970,X ; (40*24)+10
+  STA $F800+970,X ; (40*24)+10)
+  LDA BACKDROP+(BW*23),Y
+  STA $F400+920,X ; (40*23)+10
+  STA $F800+920,X ; (40*23)+10
+  INY
+  INX
+  CPX #8
+  BNE DW1         
+NODRAW
+  RTS
 
+@SCINC   ; CALL X= PLAYER
+  TXA     
+  ASL ;Implied A
+  ASL ;Implied A
+  ASL ;Implied A
+  TAX
+  LDY #ZERO
+  INC SCORES+3,X
+  LDA SCORES+3,X
+  CMP #10+ZERO    
+  BEQ SCINC1
+  RTS
 
+SCINC1
+  TYA     
+  STA SCORES+3,X
+  INC SCORES+2,X
+  LDA SCORES+2,X
+  CMP #10+ZERO
+  BEQ SCINC2
+  RTS
 
+SCINC2
+  TYA     
+  STA SCORES+2,X
+  INC SCORES+1,X
+  LDA SCORES+1,X
+  CMP #10+ZERO    
+  BEQ SCINC3
+  RTS
 
+SCINC3
+  TYA     
+  STA SCORES+1,X
+  INC SCORES,X
+  RTS
 
+@RAND
+  LDA SEED,X
+  ASL ;Implied A
+  ASL ;Implied A
+  CLC
+  ADC SEED,X
+  CLC
+  ADC #21
+  STA SEED,X
+  RTS
 
+DSCORE
+  LDY #5
 
-
-
-
-DRAWWATER
-        LDY WATERPOINT
-        BMI NODRAW
-        ;JSR WATERPROCES
-
-
-
-        LDA WATERTABLE,Y
-        TAY
-        LDX #0
-DW1     LDA BACKDROP(BW*24),Y
-        STA $F400+970,X ; (40*24)+10
-        STA $F800+970,X ; (40*24)+10)
-        LDA BACKDROP((BW*23),Y)
-        STA $F400+920,X) ; (40*23)+10
-        STA $F800+920,X) ; (40*23)+10
-        INY
-        INX
-        CPX #8
-        BNE DW1         
-NODRAW  RTS
-
-SCINC   ; CALL X= PLAYER
-        
-        TXA     
-        ASL A
-        ASL A
-        ASL A
-        TAX
-        LDY #ZERO
-
-        INC SCORES(3,X)
-        LDA SCORES(3,X)
-        CMP #10+ZERO    
-        BEQ SCINC1
-        RTS
-
-SCINC1  TYA     
-        STA SCORES(3,X)
-        INC SCORES(2,X)
-        LDA SCORES(2,X)
-        CMP #10+ZERO
-        BEQ SCINC2
-        RTS
-
-SCINC2  TYA     
-        STA SCORES(2,X)
-        INC SCORES(1,X)
-        LDA SCORES(1,X)
-        CMP #10+ZERO    
-        BEQ SCINC3
-        RTS
-
-SCINC3  TYA     
-        STA SCORES(1,X)
-        INC SCORES,X
-        RTS
-
-RAND    LDA SEED,X
-        ASL A
-        ASL A
-        CLC
-        ADC SEED,X
-        CLC
-        ADC #21
-        STA SEED,X
-        RTS
-
-DSCORE  LDY #5
 BARS    LDA SCORE1+0,Y
         STA $F400+43,Y ; 3+40
         STA $F800+43,Y ; 3+40
@@ -939,22 +947,22 @@ BARS    LDA SCORE1+0,Y
         BPL BARS
         RTS
 
-OPENWINDOWS
-        INC WINDOWSCAN
-        LDA WINDOWSCAN
-        AND #7
-        TAY
-        STA WINDOWSCAN
-        
-        LDA BUILDMAPLB,Y
-        STA BUILD
-        LDA BUILDMAPHB,Y
-        STA BUILD+1     
-        ;LDX #5
-        LDA SYNC
-        EOR CIA2+4
-        AND #63 
-        TAY
+@OPENWINDOWS
+  INC WINDOWSCAN
+  LDA WINDOWSCAN
+  AND #7
+  TAY
+  STA WINDOWSCAN
+  LDA BUILDMAPLB,Y
+  STA BUILD
+  LDA BUILDMAPHB,Y
+  STA BUILD+1     
+  ;LDX #5
+  LDA SYNC
+  EOR CIA2+4
+  AND #63 
+  TAY
+  
 OPSMC   LDA (BUILD),Y
         LDX #$59
         CMP #$2D
@@ -1027,8 +1035,8 @@ BUILDING6
         !byte $47,$2D,$2E,$50
         !byte $3C,$3D,$32,$33
 
-AS      !byte 34
-AS1     !byte 8
+AS      = 34
+AS1     = 8
 DAMAGETEXT
         !byte AS1+4,AS1+1,AS1+13,AS1+1,AS1+7,AS1+5,1
 GEORGETEXT
@@ -1037,8 +1045,6 @@ RALPHTEXT
         !byte AS1+18,AS1+1,AS1+12,AS1+16,AS1+8,1
 LIZZYTEXT
         !byte AS1+12,AS1+9,AS1+26,AS1+26,AS1+25,1
-
-
         !byte AS1+18,AS1+8,AS1+15,AS1+14,AS1+1,1,1,1
         !byte AS1+9,1,AS1+12,AS1+15,AS1+22,AS1+5,1,1
         !byte AS1+25,AS1+15,AS1+21,1,1,1
@@ -1046,9 +1052,9 @@ LIZZYTEXT
 RILY    !byte 0
 
 
-P1TEXT  !byte 8
-P2TEXT  !byte 8
-P3TEXT  !byte 8
+P1TEXT  !fill 8
+P2TEXT  !fill 8
+P3TEXT  !fill 8
 
 
 DAMAGE1
@@ -1057,13 +1063,14 @@ DAMAGE2
         !byte 1,1,1,1,1,1,1,1
 DAMAGE3
         !byte 2,2,2,2,2,2,2,2
-        !byte 10
+        !fill 10
 SCORES
 SCORE1 !byte 0,0,0,0,0,0,$FF,$FF,$FF
 SCORE2 !byte 0,0,0,0,0,0,$FF,$FF,$FF
 SCORE3 !byte 0,0,0,0,0,0,$FF,$FF,$FF
 ENH     !byte 3,64
 LOSPEED !byte 0,0,0
+
 LOSENERGY
         
 
@@ -1078,9 +1085,8 @@ LOSOME  LDA ENH,X
         BEQ LDEAD       
         JMP SETUPEN
        RTS
-GAINENERGY
-        
-        
+       
+GAINENERGY 
         CLC
         ADC ENH,X
         BCS GAOV
@@ -1104,43 +1110,45 @@ GOTRAN  LDA #0
         LDA #ATRANS
         STA ACTION,X
 
-ALRED   RTS
-
+ALRED
+  RTS
         
 SETUPEN
-
-        LDY #23
-        LDA #2          ;RED
-WQOUT   STA DAMAGE1,Y
-        DEY
-        BPL WQOUT
-
-        LDA ENH
-        LSR A   
-        LSR A
-        LSR A
-        AND #7
-        TAY
-        LDA #1
-QSET1   STA DAMAGE1,Y
-        DEY
-        BPL QSET1
-
-        LDA ENH+1
-        LSR A
-        LSR A
-        LSR A
-        AND #7
-       TAY
-        LDA #1
+  LDY #23
+  LDA #2 ;RED
+  
+WQOUT
+  STA DAMAGE1,Y
+  DEY
+  BPL WQOUT
+  LDA ENH
+  LSR ;Implied A   
+  LSR ;Implied A
+  LSR ;Implied A
+  AND #7
+  TAY
+  LDA #1
+  
+QSET1
+  STA DAMAGE1,Y
+  DEY
+  BPL QSET1
+  LDA ENH+1
+  LSR ;Implied A
+  LSR ;Implied A
+  LSR ;Implied A
+  AND #7
+  TAY
+  LDA #1
+  
 QSET2  STA DAMAGE2,Y
         DEY
         BPL QSET2
 
         LDA ENH+2
-        LSR A
-        LSR A
-        LSR A
+        LSR ;Implied A
+        LSR ;Implied A
+        LSR ;Implied A
         AND #7
         TAY
         LDA #1
@@ -1206,10 +1214,10 @@ VALUES
         ADC #ZERO
         STA SCORE2+1
         LDA DEBUG
-        LSR A
-        LSR A
-        LSR A
-        LSR A
+        LSR ;Implied A
+        LSR ;Implied A
+        LSR ;Implied A
+        LSR ;Implied A
         ADC #ZERO
         STA SCORE2+2
 
@@ -1233,9 +1241,22 @@ INIY    STA SCORE1,Y
         LDA #0
         STA SCREEN
         LDX #2
-NCOMP   LDA #64
-        STA ENH,X
-        DEX                             
-        BPL NCOMP       
+NCOMP
+  LDA #64
+  STA ENH,X
+  DEX                             
+  BPL NCOMP      
+  RTS
 
-       RTS
+
+!source "ramp.asm"
+!source "move.asm"
+;!source "build.asm"
+!source "djcode.asm"
+!source "dis.asm"
+!source "debug.asm"
+!source "copy.asm"
+;!source "back.asm"
+!source "ape0.asm"
+!source "ape1.asm"
+!source "ape2.asm"

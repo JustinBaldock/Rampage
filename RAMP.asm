@@ -1,14 +1,15 @@
 ; RAMP
-!zone RAMP
-.MAIN    SEI
-        LDX #255
-        TXS
-        LDY #2
-        LDA #0
-        STA ENABLE
-.ZEROP   STA D6510,Y
+@MAIN
+  SEI
+  LDX #255
+  TXS
+  LDY #2
+  LDA #0
+  STA ENABLE
+  
+ZEROP   STA D6510,Y
         INY
-        BNE .ZEROP       
+        BNE ZEROP       
         LDA #%00100101
         STA R6510
         LDA #%10010100  ; BANK 2
@@ -63,27 +64,27 @@
         JSR CRUM
         LDY #62
         LDA #0
-BKANSP  STA [BL*64]+BANK,Y
-        STA [253*64]+BANK,Y     ; ON
-        STA [254*64]+BANK,Y     ; BORDER
-        STA [(SO0+0)*64]+BANK,Y
-        STA [(SO0+1)*64]+BANK,Y
-        STA [(SO0+2)*64]+BANK,Y
-        STA [(SO0+3)*64]+BANK,Y
-        STA [(SO0+4)*64]+BANK,Y
-        STA [(SO0+5)*64]+BANK,Y
-        STA [(SO1+0)*64]+BANK,Y
-        STA [(SO1+1)*64]+BANK,Y
-        STA [(SO1+2)*64]+BANK,Y
-        STA [(SO1+3)*64]+BANK,Y
-        STA [(SO1+4)*64]+BANK,Y
-        STA [(SO1+5)*64]+BANK,Y
-        STA [(SO2+0)*64]+BANK,Y
-        STA [(SO2+1)*64]+BANK,Y
-        STA [(SO2+2)*64]+BANK,Y
-        STA [(SO2+3)*64]+BANK,Y
-        STA [(SO2+4)*64]+BANK,Y
-        STA [(SO2+5)*64]+BANK,Y
+BKANSP  STA BL*64+BANK,Y
+        STA 253*64+BANK,Y     ; ON
+        STA 254*64+BANK,Y     ; BORDER
+        STA (SO0+0)*64+BANK,Y
+        STA (SO0+1)*64+BANK,Y
+        STA (SO0+2)*64+BANK,Y
+        STA (SO0+3)*64+BANK,Y
+        STA (SO0+4)*64+BANK,Y
+        STA (SO0+5)*64+BANK,Y
+        STA (SO1+0)*64+BANK,Y
+        STA (SO1+1)*64+BANK,Y
+        STA (SO1+2)*64+BANK,Y
+        STA (SO1+3)*64+BANK,Y
+        STA (SO1+4)*64+BANK,Y
+        STA (SO1+5)*64+BANK,Y
+        STA (SO2+0)*64+BANK,Y
+        STA (SO2+1)*64+BANK,Y
+        STA (SO2+2)*64+BANK,Y
+        STA (SO2+3)*64+BANK,Y
+        STA (SO2+4)*64+BANK,Y
+        STA (SO2+5)*64+BANK,Y
         
         DEY
         BPL BKANSP
@@ -156,39 +157,44 @@ BKANSP  STA [BL*64]+BANK,Y
         LDA #%11111111
         STA ENABLE
         JSR AIR
-LOOP    JSR JOYGET      ; JOYGET !!
-        LDX #0
-        JSR MOVE
-        LDX #1
-        JSR MOVE
-        LDX #2
-        JSR MOVE
-        JSR SET0
-        JSR SET1
-        LDA CARB+1
-        BNE EAR
-        JSR NEWO
-EAR     JSR DRAWBUILD
-        LDA SYNC
-SMO     CMP SYNC
-        BEQ SMO
-        JMP LOOP
+@LOOP
+  JSR @JOYGET      ; JOYGET !!
+  LDX #0
+  JSR MOVE
+  LDX #1
+  JSR MOVE
+  LDX #2
+  JSR MOVE
+  JSR SET0
+  JSR SET1
+  LDA CARB+1
+  BNE EAR
+  JSR NEWO
+        
+EAR
+  JSR @DRAWBUILD
+  LDA SYNC
 
-AWALK           = 1   ; WALKING
-APUNCHW = 2   ; PUNCH GROUND
-ACLIMB          = 3   ; CLIMB
-APUNCHC = 4   ; PUNCH CLIMB
-AJUMP           = 5   ; JUMP
-AGRAWL          = 6   ; GRAWLING
-AOUCH           = 7   ; BEING HIT
-ASUPRISE        = 8
-ATRANS          = 9
-ADIE            = 10
-ASTARE          = 11
-AFALL           = 12
-AGROWL          = 13
-AEAT            = 14
-ADEAD           = 15
+SMO
+  CMP SYNC
+  BEQ SMO
+  JMP @LOOP
+
+AWALK     = 1   ; WALKING
+APUNCHW   = 2   ; PUNCH GROUND
+ACLIMB    = 3   ; CLIMB
+APUNCHC   = 4   ; PUNCH CLIMB
+AJUMP     = 5   ; JUMP
+AGRAWL    = 6   ; GRAWLING
+AOUCH     = 7   ; BEING HIT
+ASUPRISE  = 8
+ATRANS    = 9
+ADIE      = 10
+ASTARE    = 11
+AFALL     = 12
+AGROWL    = 13
+AEAT      = 14
+ADEAD     = 15
         ; DIRECTION 0 FACING LEFT
 ACTTABL 
         !byte >WALK
@@ -205,7 +211,7 @@ ACTTABL
         !byte >FALL
         !byte >GROWL
         !byte >EAT
-       !byte >DEAD
+        !byte >DEAD
 ACTTABH
         !byte <WALK
         !byte <PUNCHW
@@ -223,11 +229,13 @@ ACTTABH
         !byte <EAT
         !byte <DEAD
 
-MOVE    LDY ACTION,X
-        LDA ACTTABL-1,Y
-        STA SOMET+1
-        LDA ACTTABH-1,Y
-        STA SOMET+2
+@MOVE
+  LDY ACTION,X
+   LDA ACTTABL-1,Y
+   STA SOMET+1
+   LDA ACTTABH-1,Y
+   STA SOMET+2
+   
 SOMET   JSR $FFFF       ; SMC
         LDA ACTION,X    
         CMP #ADEAD
@@ -309,20 +317,22 @@ OOR     LDA #AJUMP      ; FIRE ONLY
         RTS
 
 JUWA    LDA LEFT,X
-        BEQ .NOM
+        BEQ NOM
         LDA DIR,X
         BPL .ALSET
         INC DIR,X
-.ALSET  JMP WALKL       ; WALK LEFT
+ALSET
+  JMP WALKL       ; WALK LEFT
 
-.NOM
+NOM
   LDA RIGHT,X
-.BLOCK
-        BEQ OFFB
-        LDA DIR,X
-        BMI .ALSET
-        DEC DIR,X
-.ALSET  JMP WALKR
+BLOCK
+  BEQ OFFB
+  LDA DIR,X
+  BMI ALSET
+  DEC DIR,X
+ALSET
+  JMP WALKR
 
 WALKL   JSR WALKY       ; LEFT
         LDA X,X
@@ -334,8 +344,9 @@ WALKR   JSR WALKY       ; RIGHT
         LDA X,X
         CLC
         ADC #2
-SAVEM   STA X,X
-        RTS
+SAVEM
+  STA X,X
+  RTS
 
 
 CLIM    JSR CLIMBCHECK
@@ -350,7 +361,7 @@ CLIM    JSR CLIMBCHECK
 RIGHTS  LDA DIR,X
         BPL MINS
         LDA #12
-        NOPP
+        +NOPP
 MINS    LDA #4
 GOTV    CLC
         ADC X,X
@@ -377,7 +388,7 @@ HANDWATER
         LDA X,X
         CMP #10*4
         BCC NOTIN
-       CMP #16*4
+        CMP #16*4
         BCS NOTIN
         LDA #$06
         STA FRAME,X
@@ -386,7 +397,7 @@ HANDWATER
 NOTIN   CLC
         RTS
 WALKY
-        JSR HANDWATER
+        JSR @HANDWATER
         BCC WALKFINE
         RTS
 WALKFINE
@@ -394,16 +405,16 @@ WALKFINE
         CLC
         ADC #1
         CMP #4*4
-        BCC .LESS
+        BCC LESS
         LDA #0
-.LESS   
+LESS   
   STA STEP,X
   LSR ;Implied A
   LSR ;Implied A
   CLC
   ADC #8  
   STA FRAME,X
-.NOM
+NOM
   RTS
 
 OYT0    !byte 6,2,3,3
@@ -432,7 +443,7 @@ SUPER   CLC
         STA FISX,X
         RTS
 
-HITHEL  JSR CHK0
+HITHEL  JSR @CHK0
         BCS SDF ; OUT OF RANGE
         LDA HEACT0
         CMP #8
@@ -460,49 +471,58 @@ SDF     JSR CHK1
         ADC #20
         STA HECYT1+8
         JMP EXPI1
-SPF     RTS
+SPF
+  RTS
 
-HITC    LDA YTEMP       ; HELI CHR CORD
-        CMP FISY,X      ; APE HAND
-        BEQ JOL
-        CLC
-        ADC #1
-        CMP FISY,X
-        BNE CANN
+HITC
+  LDA YTEMP       ; HELI CHR CORD
+  CMP FISY,X      ; APE HAND
+  BEQ JOL
+  CLC
+  ADC #1
+  CMP FISY,X
+  BNE CANN
 
-JOL     LDA XTEMP
-        CMP FISX,X
-        BEQ CAN
-        CLC
-        ADC #1
-        CMP FISX,X
-        BEQ CAN
-CANN    CLC     ; MISSED
-        RTS     
+JOL
+  LDA XTEMP
+  CMP FISX,X
+  BEQ CAN
+  CLC
+  ADC #1
+  CMP FISX,X
+  BEQ CAN
 
-CAN     SEC     ; HIT
-        RTS
+CANN
+  CLC     ; MISSED
+  RTS     
 
-CHK0    LDA HEY0
-        LSR ;Implied A   
-        LSR ;Implied A
-        LSR ;Implied A
-        SEC
-        SBC #5
-        STA YTEMP
-        LDA HEX0
-        CMP #8
-        BCC EXI
-        CMP #$9E
-        BCS EXI
-        LSR ;Implied A
-        LSR ;Implied A
-        SEC
-        SBC #2
-        STA XTEMP
-        CLC
-        RTS
-CHK1    LDA HEY1
+CAN
+  SEC     ; HIT
+  RTS
+
+@CHK0
+  LDA HEY0
+  LSR ;Implied A   
+  LSR ;Implied A
+  LSR ;Implied A
+  SEC
+  SBC #5
+  STA YTEMP
+  LDA HEX0
+  CMP #8
+  BCC EXI
+  CMP #$9E
+  BCS EXI
+  LSR ;Implied A
+  LSR ;Implied A
+  SEC
+  SBC #2
+  STA XTEMP
+  CLC
+  RTS
+
+CHK1
+  LDA HEY1
         LSR ;Implied A
         LSR ;Implied A
         LSR ;Implied A
@@ -522,60 +542,79 @@ CHK1    LDA HEY1
         CLC
         RTS
 
-EXI     SEC
-        RTS
+EXI
+  SEC
+  RTS
                 ; PUNCH FOR WALKING
-TRYP1   LDA LEFT,X
-        BEQ .TRR
-        LDA DIR,X
-        BNE EXI ;NOTHN  ; BACKP
-        BEQ .THIW
-.TRR    LDA RIGHT,X
-        BEQ .TRR2
-        LDA DIR,X
-        BEQ EXI;        NOTHN   ; BACKP 
-        BNE .THIW
-.TRR2   LDA UP,X
-        BEQ .GOTTB
-        LDY #0
-        LDA #$18        ; PUNCH UP
-        JMP .STF
-.GOTTB  LDA #7          ; PUNCH DOWN
-        LDY #1
-        JMP .STF
-.THIW   LDA #4          ; PUNCH LEFT
-        LDY #2
-        JMP .STF
-.BACKP  LDA #$16        ; PUNCH RIGHT
-        LDY #3
-.STF    STA FRAME,X
-        TYA
-        STA HANDY,X     ; WHAT POS
-        LDA #APUNCHW
-        STA ACTION,X
-        LDA #0
-        STA COUNT,X
-        JSR HIT ; PUNCH WHAT
-        JSR FISTPO
-        JSR DETEC2
-        JMP HITHEL
-TC      RTS
+TRYP1
+  LDA LEFT,X
+  BEQ TRR
+  LDA DIR,X
+  BNE EXI ;NOTHN  ; BACKP
+  BEQ THIW
+
+TRR
+  LDA RIGHT,X
+  BEQ TRR2
+  LDA DIR,X
+  BEQ EXI;        NOTHN   ; BACKP 
+  BNE THIW
+
+TRR2
+  LDA UP,X
+  BEQ GOTTB
+  LDY #0
+  LDA #$18        ; PUNCH UP
+  JMP STF
+
+GOTTB
+  LDA #7          ; PUNCH DOWN
+  LDY #1
+  JMP STF
+
+THIW
+  LDA #4          ; PUNCH LEFT
+  LDY #2
+  JMP STF
+
+BACKP
+  LDA #$16        ; PUNCH RIGHT
+  LDY #3
+
+STF
+  STA FRAME,X
+  TYA
+  STA HANDY,X     ; WHAT POS
+  LDA #APUNCHW
+  STA ACTION,X
+  LDA #0
+  STA COUNT,X
+  JSR HIT ; PUNCH WHAT
+  JSR FISTPO
+  JSR DETEC2
+  JMP HITHEL
+  
+TC
+  RTS
         
-PUNCHW  LDA FIRE,X
-        BNE TC
-        LDA COUNT,X
-        CLC
-        ADC #1
-        CMP #1  ; 3
-        BCC STEX        
-        LDA #0
-        STA COUNT,X
-        LDA #8          ; ACTION 2
-        STA FRAME,X
-        LDA #AWALK      ; BACK TO WALK
-        STA ACTION,X
-STEX    STA COUNT,X
-        RTS
+PUNCHW
+  LDA FIRE,X
+  BNE TC
+  LDA COUNT,X
+  CLC
+  ADC #1
+  CMP #1  ; 3
+  BCC STEX        
+  LDA #0
+  STA COUNT,X
+  LDA #8          ; ACTION 2
+  STA FRAME,X
+  LDA #AWALK      ; BACK TO WALK
+  STA ACTION,X
+
+STEX
+  STA COUNT,X
+  RTS
 
 CLIMBCHECK
         LDA FIRE,X
@@ -615,7 +654,7 @@ CRUNCH  SEC
 
 ONBEG
   LDA #255        ; DIRECTION
-  NOPP            ; FACEING
+  +NOPP            ; FACEING
 
 ONEND
   LDA #0
@@ -643,7 +682,7 @@ SIDE    LDA Y,X
         LDA DIR,X
         BPL TO2
         LDA #4
-        NOPP
+        +NOPP
 TO2     LDA #-4
         CLC
         ADC X,X
@@ -651,7 +690,7 @@ TO2     LDA #-4
         LSR ;Implied A
         JSR MEMXY
         LDY #0
-        LDA (MIKE1),Y
+        LDA MIKE1,Y
         CMP #$0C
         BEQ TH
         CMP #$0D
@@ -697,7 +736,7 @@ CLIMB   LDA FIRE,X      ; ACTION 3
         LDA DIR,X       ; BUILDING
         BPL AD4
         LDA #-4
-        NOPP
+        +NOPP
 AD4     LDA #4  
         CLC
         ADC X,X
@@ -731,7 +770,7 @@ BWL     LDA MONONB,X
         LDA DIR,X       ; PUT ON
         BPL SBI         ; TOP OF
         LDA #8  ; BUILDING
-        NOPP
+        +NOPP
 SBI     LDA #-8
         CLC
         ADC X,X
@@ -768,7 +807,7 @@ TRYP2   LDA LEFT,X
         BEQ .BACKP      
         BNE .THIW
 .TRR2   LDA UP,X
-        BEQ :GOTTB
+        BEQ .GOTTB
         LDY #0
         LDA #$19                ; PUNCH UP
         JMP .STF
@@ -851,7 +890,7 @@ STEX2   RTS
 JUMP    LDA DIR,X       ; ACTION 5
         BMI THIW
         LDA #-2
-        NOPP
+        +NOPP
 THIW    LDA #2
         CLC
         ADC X,X
@@ -875,7 +914,8 @@ CHICK   LDY COUNT,X
 
 GRAWL   RTS     ; ACTION 6
 
-OUCH    LDA COUNT,X     ACTION 7
+OUCH
+  LDA COUNT,X   ; ACTION 7
         CLC
         ADC #1
         CMP #10
@@ -922,7 +962,7 @@ TRANT   !byte $20,$21,$20,$21
 DIE     LDA DIR,X       ; ACTION 10
         BPL FCNL        
         LDA #1
-        NOPP    
+        +NOPP    
 FCNL    LDA #-1
         CLC
         ADC X,X
@@ -957,23 +997,25 @@ STARE   JSR ANYKEY      ; ACTION 11
         BEQ WALKF
         CMP #ACLIMB
         BNE WHAT
-        JSR HANDWATER
+        JSR @HANDWATER
         BCS WHAT
         LDA #$1B
-        NOPP
+        +NOPP
 WALKF   LDA #8
         STA FRAME,X
 WHAT    RTS
 
-OUTOF   JSR HANDWATER
-        BCS WHAT
-        LDA LASTA,X     
-        CMP #AWALK
-        BEQ ATN
-        CMP #ACLIMB
-        BNE NOM 
-        LDA #$15
-        NOPP
+OUTOF
+  JSR @HANDWATER
+  BCS WHAT
+  LDA LASTA,X     
+  CMP #AWALK
+  BEQ ATN
+  CMP #ACLIMB
+  BNE NOM 
+  LDA #$15
+  +NOPP
+  
 ATN     LDA #0
         STA FRAME,X
 NOM     RTS     ; STAY AS YOU ARE
@@ -985,28 +1027,28 @@ ANYKEY  LDA FIRE,X
         ORA DOWN,X
         RTS
 
-        BLOCK   ; ACTION 12
+BLOCK   ; ACTION 12
 FALL    LDA Y,X
         CLC
         ADC #8
         STA Y,X
         CMP #189+7
-        BCS .AAO
+        BCS AAO
         JSR MODEL       
-        BCS .AAD        ; ON PLAT
-.GETL   RTS
+        BCS AAD        ; ON PLAT
+GETL   RTS
 
-.AAD    LDA Y,X
+AAD     LDA Y,X
         AND #15
         CMP #12
-        BEQ .NOF
+        BEQ NOF
         CMP #4
-        BEQ .NOF
+        BEQ NOF
         RTS
 
-.AAO    LDA #189+7      ; ?
+AAO    LDA #189+7      ; ?
         STA Y,X
-.NOF    LDA #AWALK
+NOF    LDA #AWALK
         STA ACTION,X
         RTS
 
@@ -1020,41 +1062,41 @@ MODEL   LDA Y,X
         LSR ;Implied A
         JSR MEMXY
         LDY #0
-        LDA (MIKE1),Y
+        LDA MIKE1,Y
         CMP #9
-        BEQ .AAD
+        BEQ AAD
         CMP #10
-        BEQ .AAD
+        BEQ AAD
         CMP #11
-        BEQ .AAD
+        BEQ AAD
         CMP #33
-        BEQ .ADD
+        BEQ ADD
         CMP #34
-        BEQ .AAD
+        BEQ AAD
         CMP #35
-        BEQ .AAD
+        BEQ AAD
         CMP #36
-        BEQ .AAD
+        BEQ AAD
         CMP #37
-        BEQ .AAD
+        BEQ AAD
         CMP #$40
-        BEQ .ADD
+        BEQ ADD
         CMP #$41
-        BEQ .ADD
+        BEQ ADD
         CMP #$20
-        BEQ .ADD
+        BEQ ADD
         CMP #$21
-        BEQ .ADD
+        BEQ ADD
         CMP #$22
-        BEQ .ADD
+        BEQ ADD
         CMP #$23
-        BEQ .ADD
+        BEQ ADD
         CMP #$24
-        BEQ .ADD
+        BEQ ADD
         CMP #255-32
         RTS
 
-.ADD    SEC
+ADD    SEC
         RTS
 
 HITW    !byte 1,0,0
@@ -1075,7 +1117,7 @@ WACK    LDA #0
         LDA ACTION,Y
         CMP #ADIE
         BNE WACK1
-       LDA #0
+        LDA #0
         STA X,Y
         LDA #AEAT
         STA ACTION,X
@@ -1091,17 +1133,21 @@ WACK1   CMP #AWALK
         LDA LASTA,Y
         CMP #AWALK
         BEQ AOU
-CLA     LDA #AFALL      ; ELSE FALL
-        NOPP
-AOU     LDA #AOUCH
-        STA ACTION,Y
-        LDA DIR,X
-        BPL SBT
-        LDA #4
-        NOPP
-SBT     LDA #-4
-        STA HITAD,Y
-MISS    RTS
+CLA
+  LDA #AFALL      ; ELSE FALL
+  +NOPP
+AOU
+  LDA #AOUCH
+  STA ACTION,Y
+  LDA DIR,X
+  BPL SBT
+  LDA #4
+  +NOPP
+SBT
+  LDA #-4
+  STA HITAD,Y
+MISS
+  RTS
 
 DETECT  LDA X,X
         CMP X,Y         ; SOTWARE
@@ -1353,6 +1399,7 @@ MOVTH   !byte <HM0,<HM1,<HM2,<HM3
         !byte <HM4,<HM5,<HM6,<HM7
         !byte <HM8,<HM9,<HM10,<HM11
         !byte <HM12
+        
 HM0     !byte 0,-1,0+SS0
 HM1     !byte -1,0,4+SS0
 HM2     !byte -1,1,8+SS0
@@ -1397,19 +1444,19 @@ M3      !byte 4,140        ; RIGHT
         !byte 1,120        ; LEFT
         !byte 255
 
-M4      !byte 1,50         ; LEFT
-        !byte 6,40         ; HOVER
-        !byte 0,60         ; UP
-        !byte 2,50         ; DIAG
+M4      !byte 1,50 ; LEFT
+        !byte 6,40 ; HOVER
+        !byte 0,60 ; UP
+        !byte 2,50 ; DIAG
         !byte 1,90 ; LEFT
         !byte 255  
 
-M5      !byte 1,100        ; LEFT
-        !byte 3,60         ; UP
-        !byte 2,50         ; DIAG
-        !byte 3,60         ; UP
-        !byte 5,50         ; DIAG
-        !byte 4,100        ; RIGHT
+M5      !byte 1,100 ; LEFT
+        !byte 3,60 ; UP
+        !byte 2,50 ; DIAG
+        !byte 3,60 ; UP
+        !byte 5,50 ; DIAG
+        !byte 4,100 ; RIGHT
         !byte 255
 
 M6      !byte 4,80         ; RIGHT
@@ -1464,7 +1511,7 @@ NEXTB0  LDA TABML0
         BCC SD0
         INC TABML0+1
 SD0     LDY #0
-        LDA (TABML0),Y
+        LDA TABML0,Y
         CMP #255        ; END OF LIST
         BNE NOE0
         LDA #255
@@ -1478,16 +1525,16 @@ NOE0    TAY     ; HELI 0
         LDA MOVTH,Y
         STA TMPMEM+1
         LDY #1
-        LDA (TABML0),Y
+        LDA TABML0,Y
         STA SPD0
         DEY
-        LDA (TMPMEM),Y
+        LDA TMPMEM,Y
         STA THX0+1
         INY
-        LDA (TMPMEM),Y
+        LDA TMPMEM,Y
         STA THY0+1
         INY
-        LDA (TMPMEM),Y
+        LDA TMPMEM,Y
         STA PRT0+1
         RTS             
 
@@ -1534,29 +1581,33 @@ PRT1    LDA #255
 SET1    LDA HUSED1
         BPL OFFS
 FIRS1   LDY #9
-        JSR RAND
+        JSR @RAND
         AND #7
         TAY
-EXPI1   LDA PATHTL,Y
-        STA TABML1+0
-        LDA PATHTH,Y
-        STA TABML1+1
-        LDA HECXT1,Y
-        STA HEX1
-        LDA HECYT1,Y
-        SEC
-        SBC #20 
-        STA HEY1
-        LDA #0
-        STA HUSED1
-NEXTB1  LDA TABML1      
-        CLC
-        ADC #2
-        STA TABML1
-        BCC SD1
-        INC TABML1+1
+EXPI1
+  LDA PATHTL,Y
+  STA TABML1+0
+  LDA PATHTH,Y
+  STA TABML1+1
+  LDA HECXT1,Y
+  STA HEX1
+  LDA HECYT1,Y
+  SEC
+  SBC #20 
+  STA HEY1
+  LDA #0
+  STA HUSED1
+
+NEXTB1
+  LDA TABML1      
+  CLC
+  ADC #2
+  STA TABML1
+  BCC SD1
+  INC TABML1+1
+
 SD1     LDY #0
-        LDA (TABML1),Y
+        LDA TABML1,Y
         CMP #255        ; END OF LIST
         BNE NOE1
         LDA #255
@@ -1570,16 +1621,16 @@ NOE1    TAY     ; HELI 1
         LDA MOVTH,Y
         STA TMPMEM+1
         LDY #1
-        LDA (TABML1),Y
+        LDA TABML1,Y
         STA SPD1
         DEY
-        LDA (TMPMEM),Y
+        LDA TMPMEM,Y
         STA THX1+1
         INY
-        LDA (TMPMEM),Y
+        LDA TMPMEM,Y
         STA THY1+1
         INY
-        LDA (TMPMEM),Y
+        LDA TMPMEM,Y
         STA PRT1+1
 NOF     RTS     
 
@@ -1612,59 +1663,66 @@ COLRAMH !byte 0,0,0,0,0,0
         ; UTILITIES FOR GAME
 
         ; SCAN JOYSTICK
-JOYGET  LDX #0
-        LDA CHUMAN,X
-        BEQ RJOY
-        JSR AUTOPLAY
-        JMP RJOYA
-RJOY    STX CIA1+2
-        JSR JOYST       ; PORT 1
-RJOYA   LDX #1          ; PORT 2
-        LDA CHUMAN,X
-        BEQ RJOY1
-        JSR AUTOPLAY
-        JMP RJOY1A
-RJOY1   JSR JOYST
-        LDX #2
-        LDA CHUMAN,X
-        BEQ RJOY1A
-        JSR AUTOPLAY
-        RTS
-RJOY1A  LDA #255        ; KEYBOARD
-        STA CIA1+2
-        LDA #%10111111
-        STA CIA1
-        LDA CIA1+1
-        EOR #%11111111
-        STA JOY
-        LDA #0
-        ASL JOY
-        ROL ;Implied A
-        STA RIGHT+2
-        LDA #0
-        ASL JOY
-        ASL JOY
-        ROL ;Implied A
-        STA FIRE+2
-        LDA #%11011111
-        STA CIA1
-        LDA CIA1+1
-        EOR #%11111111
-        STA JOY
-        LDA #0
-        ASL JOY
-        ROL ;Implied A
-        STA LEFT+2
-        LDA #0
-        ASL JOY
-        ROL ;Implied A
-        STA UP+2
-        LDA #0
-        ASL JOY
-        ROL ;Implied A
-        STA DOWN+2
+@JOYGET
+  LDX #0
+  LDA CHUMAN,X
+  BEQ RJOY
+  JSR AUTOPLAY
+  JMP RJOYA
+  
+RJOY
+  STX CIA1+2
+  JSR JOYST       ; PORT 1
+RJOYA
+  LDX #1          ; PORT 2
+  LDA CHUMAN,X
+  BEQ RJOY1
+  JSR AUTOPLAY
+  JMP RJOY1A
+RJOY1
+  JSR JOYST
+  LDX #2
+  LDA CHUMAN,X
+  BEQ RJOY1A
+  JSR AUTOPLAY
+  RTS
+RJOY1A
+  LDA #255        ; KEYBOARD
+  STA CIA1+2
+  LDA #%10111111
+  STA CIA1
+  LDA CIA1+1
+  EOR #%11111111
+  STA JOY
+  LDA #0
+  ASL JOY
+  ROL ;Implied A
+  STA RIGHT+2
+  LDA #0
+  ASL JOY
+  ASL JOY
+  ROL ;Implied A
+  STA FIRE+2
+  LDA #%11011111
+  STA CIA1
+  LDA CIA1+1
+  EOR #%11111111
+  STA JOY
+  LDA #0
+  ASL JOY
+  ROL ;Implied A
+  STA LEFT+2
+  LDA #0
+  ASL JOY
+  ROL ;Implied A
+  STA UP+2
+  LDA #0
+  ASL JOY
+  ROL ;Implied A
+  STA DOWN+2
 
-NOFIRE  RTS
+NOFIRE
+  RTS
 
 JOYST   LDA CIA1,X
         EOR #%00011111
