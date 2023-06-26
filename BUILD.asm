@@ -1,12 +1,3 @@
-!to "rampage.prm",cbm
-
-;*=$0801 
-
-!macro NOPP
-  !byte $2C
-!end
-
-;!byte    $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096       ;basic loader
 
 ;MUSIC          = $200  ;to $B00
 DTILES          = $7000  ;to $7500
@@ -15,9 +6,7 @@ COLMEM          = $1300
 COLMEM1         = $1400
 BLSTART         = $3C10 ;to 4000      ; BLOCK
 SMDJ            = $75   ; +$76
-
 CODE            = $7800
-
 BW              = 79
 ZERO            = 64
 TEMPCOL         = $F400
@@ -79,7 +68,7 @@ SCBACKPOINT
 
 STATUS  !byte 0
 
-@NODEM
+NODEM
         LDA #0
         STA STEMP
         LDY RILY
@@ -174,11 +163,11 @@ INI1    INC SCREEN
         JSR SIDWIPE
         JSR SCREENWIPE
         RTS     
-@FOUND
+FOUND
   INC $D020
-  JMP @FOUND
+  JMP FOUND
   
-@DRAWBUILD
+DRAWBUILD
         LDA FIRE+2
         BEQ NONK        
         LDA #AEAT
@@ -237,8 +226,9 @@ FLIPSCREEN
 
 COPYCOL1
         LDY #39
+ENDLABEL3
         
-@COPYCOL
+COPYCOL
         LDX TEMPCOL+(24*40),Y
         LDA COLMEM,X
         STA NYBBLE+(24*40),Y
@@ -304,7 +294,7 @@ COPYCOL1
         STA NYBBLE+(4*40),Y
         DEY
         BMI COPOUT1
-        JMP @COPYCOL
+        JMP COPYCOL
 COPOUT1 RTS
 
 
@@ -383,7 +373,7 @@ COPYCOLR2
 COPYCOLR3
   RTS
 
-@CRACKUP
+CRACKUP
 
 BUILDCRACK
   TAX
@@ -432,8 +422,9 @@ CRACKEDUP2
 
 
 SETUPBUILDINGS
-        LDY #0
-BUILDSET        LDX #0
+  LDY #0
+BUILDSET
+  LDX #0
 SMCBT   LDA $FFFF,Y
         STA IMTIRED
         BMI ALLBUILDS
@@ -826,7 +817,7 @@ MOUNT2  LDA MOUNT+(BW*00),Y
         BPL MOUNT2
         RTS
 
-@DRAWWATER
+DRAWWATER
   LDY WATERPOINT
   BMI NODRAW
   ;JSR WATERPROCES
@@ -848,7 +839,7 @@ DW1
 NODRAW
   RTS
 
-@SCINC   ; CALL X= PLAYER
+SCINC   ; CALL X= PLAYER
   TXA     
   ASL ;Implied A
   ASL ;Implied A
@@ -885,7 +876,7 @@ SCINC3
   INC SCORES,X
   RTS
 
-@RAND
+RAND
   LDA SEED,X
   ASL ;Implied A
   ASL ;Implied A
@@ -947,7 +938,7 @@ BARS    LDA SCORE1+0,Y
         BPL BARS
         RTS
 
-@OPENWINDOWS
+OPENWINDOWS
   INC WINDOWSCAN
   LDA WINDOWSCAN
   AND #7
@@ -963,25 +954,26 @@ BARS    LDA SCORE1+0,Y
   AND #63 
   TAY
   
-OPSMC   LDA (BUILD),Y
-        LDX #$59
-        CMP #$2D
-        BEQ ITSAWINDOW
-        INX
-        CMP #$2E
-        BEQ ITSAWINDOW
-        LDX #$39
-        CMP #$35
-        BEQ ITSAWINDOW
-        INX
-        CMP #$36
-        BEQ ITSAWINDOW
-        SEC
-        RTS             
+OPSMC
+  LDA BUILD,Y
+  LDX #$59
+  CMP #$2D
+  BEQ ITSAWINDOW
+  INX
+  CMP #$2E
+  BEQ ITSAWINDOW
+  LDX #$39
+  CMP #$35
+  BEQ ITSAWINDOW
+  INX
+  CMP #$36
+  BEQ ITSAWINDOW
+  SEC
+  RTS             
         
 ITSAWINDOW
         TXA
-        STA (BUILD),Y
+        STA BUILD,Y
         CLC
         RTS
 
@@ -1072,19 +1064,19 @@ ENH     !byte 3,64
 LOSPEED !byte 0,0,0
 
 LOSENERGY
-        
-
-        INC LOSPEED,X
-        LDA LOSPEED,X
-        AND #7
-        BEQ LOSOME
-LOSOME  LDA ENH,X
-        BEQ LDEAD
-        DEC ENH,X
-        LDA ENH,X
-        BEQ LDEAD       
-        JMP SETUPEN
-       RTS
+  INC LOSPEED,X
+  LDA LOSPEED,X
+  AND #7
+  BEQ LOSOME
+  
+LOSOME
+  LDA ENH,X
+  BEQ LDEAD
+  DEC ENH,X
+  LDA ENH,X
+  BEQ LDEAD       
+  JMP SETUPEN
+  RTS
        
 GAINENERGY 
         CLC
@@ -1249,14 +1241,3 @@ NCOMP
   RTS
 
 
-!source "ramp.asm"
-!source "move.asm"
-;!source "build.asm"
-!source "djcode.asm"
-!source "dis.asm"
-!source "debug.asm"
-!source "copy.asm"
-;!source "back.asm"
-!source "ape0.asm"
-!source "ape1.asm"
-!source "ape2.asm"

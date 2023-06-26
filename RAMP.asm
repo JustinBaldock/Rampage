@@ -1,5 +1,32 @@
+!to "rampage.prm",cbm
+
+*=$0801 
+!byte $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096       ;basic loader
+
+*=$1000 ; start address for 6502 code
+
+; stop getting warnings about unused label
+!nowarn w1000
+
+!macro NOPP
+  !byte $2C
+!end
+
+;!source "ramp.asm"
+!source "build.asm"
+!source "irq.asm"
+!source "debug.asm"
+!source "copy.asm"
+;!source "back.asm"
+!source "move.asm"
+!source "dis.asm"
+!source "djcode.asm"
+!source "ape0.asm"
+!source "ape1.asm"
+!source "ape2.asm"
+
 ; RAMP
-@MAIN
+MAIN
   SEI
   LDX #255
   TXS
@@ -67,24 +94,42 @@ ZEROP   STA D6510,Y
 BKANSP  STA BL*64+BANK,Y
         STA 253*64+BANK,Y     ; ON
         STA 254*64+BANK,Y     ; BORDER
-        STA (SO0+0)*64+BANK,Y
-        STA (SO0+1)*64+BANK,Y
-        STA (SO0+2)*64+BANK,Y
-        STA (SO0+3)*64+BANK,Y
-        STA (SO0+4)*64+BANK,Y
-        STA (SO0+5)*64+BANK,Y
-        STA (SO1+0)*64+BANK,Y
-        STA (SO1+1)*64+BANK,Y
-        STA (SO1+2)*64+BANK,Y
-        STA (SO1+3)*64+BANK,Y
-        STA (SO1+4)*64+BANK,Y
-        STA (SO1+5)*64+BANK,Y
-        STA (SO2+0)*64+BANK,Y
-        STA (SO2+1)*64+BANK,Y
-        STA (SO2+2)*64+BANK,Y
-        STA (SO2+3)*64+BANK,Y
-        STA (SO2+4)*64+BANK,Y
-        STA (SO2+5)*64+BANK,Y
+        TEMP = ((SO0+0)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO0+1)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO0+2)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO0+3)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO0+4)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO0+5)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO1+0)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO1+1)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO1+2)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO1+3)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO1+4)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO1+5)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO2+0)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO2+1)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO2+2)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO2+3)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO2+4)*64+BANK)
+        STA TEMP,Y
+        TEMP = ((SO2+5)*64+BANK)
+        STA TEMP,Y
         
         DEY
         BPL BKANSP
@@ -157,8 +202,8 @@ BKANSP  STA BL*64+BANK,Y
         LDA #%11111111
         STA ENABLE
         JSR AIR
-@LOOP
-  JSR @JOYGET      ; JOYGET !!
+LOOP
+  JSR JOYGET      ; JOYGET !!
   LDX #0
   JSR MOVE
   LDX #1
@@ -172,13 +217,13 @@ BKANSP  STA BL*64+BANK,Y
   JSR NEWO
         
 EAR
-  JSR @DRAWBUILD
+  JSR DRAWBUILD
   LDA SYNC
 
 SMO
   CMP SYNC
   BEQ SMO
-  JMP @LOOP
+  JMP LOOP
 
 AWALK     = 1   ; WALKING
 APUNCHW   = 2   ; PUNCH GROUND
@@ -228,13 +273,14 @@ ACTTABH
         !byte <GROWL
         !byte <EAT
         !byte <DEAD
+ENDLABEL1
 
-@MOVE
+MOVE
   LDY ACTION,X
-   LDA ACTTABL-1,Y
-   STA SOMET+1
-   LDA ACTTABH-1,Y
-   STA SOMET+2
+  LDA ACTTABL-1,Y
+  STA SOMET+1
+  LDA ACTTABH-1,Y
+  STA SOMET+2
    
 SOMET   JSR $FFFF       ; SMC
         LDA ACTION,X    
@@ -255,11 +301,12 @@ CANBE   STA LASTA,X
 MOVM    JMP CREATE
         
 
-BLOCK           ; ACTION 1
+;BLOCK           ; ACTION 1
 
 WALK    JSR WA
         JSR CLIM
-CHECKF  LDA Y,X
+CHECKF
+  LDA Y,X
         CMP #189+7      ; IF ON GROUND
         BCS ATB ; DONT FALL
         JSR MODEL
@@ -317,21 +364,21 @@ OOR     LDA #AJUMP      ; FIRE ONLY
         RTS
 
 JUWA    LDA LEFT,X
-        BEQ NOM
+        BEQ NOM1
         LDA DIR,X
-        BPL .ALSET
+        BPL ALSET
         INC DIR,X
 ALSET
   JMP WALKL       ; WALK LEFT
 
-NOM
+NOM1
   LDA RIGHT,X
-BLOCK
+;BLOCK
   BEQ OFFB
   LDA DIR,X
-  BMI ALSET
+  BMI .ALSET
   DEC DIR,X
-ALSET
+.ALSET
   JMP WALKR
 
 WALKL   JSR WALKY       ; LEFT
@@ -397,7 +444,7 @@ HANDWATER
 NOTIN   CLC
         RTS
 WALKY
-        JSR @HANDWATER
+        JSR HANDWATER
         BCC WALKFINE
         RTS
 WALKFINE
@@ -443,7 +490,7 @@ SUPER   CLC
         STA FISX,X
         RTS
 
-HITHEL  JSR @CHK0
+HITHEL  JSR CHK0
         BCS SDF ; OUT OF RANGE
         LDA HEACT0
         CMP #8
@@ -500,7 +547,7 @@ CAN
   SEC     ; HIT
   RTS
 
-@CHK0
+CHK0
   LDA HEY0
   LSR ;Implied A   
   LSR ;Implied A
@@ -548,31 +595,31 @@ EXI
                 ; PUNCH FOR WALKING
 TRYP1
   LDA LEFT,X
-  BEQ TRR
+  BEQ .TRR
   LDA DIR,X
   BNE EXI ;NOTHN  ; BACKP
-  BEQ THIW
+  BEQ THIW1
 
 TRR
   LDA RIGHT,X
   BEQ TRR2
   LDA DIR,X
   BEQ EXI;        NOTHN   ; BACKP 
-  BNE THIW
+  BNE THIL
 
 TRR2
   LDA UP,X
-  BEQ GOTTB
+  BEQ GOTTB1
   LDY #0
   LDA #$18        ; PUNCH UP
   JMP STF
 
-GOTTB
+GOTTB1
   LDA #7          ; PUNCH DOWN
   LDY #1
   JMP STF
 
-THIW
+THIW1
   LDA #4          ; PUNCH LEFT
   LDY #2
   JMP STF
@@ -638,7 +685,7 @@ DS      LSR ;Implied A
         ADC #1
         STA TMP
         LDY #7
-GETL    LDA SBTOP,Y
+.GETL    LDA SBTOP,Y
         CMP Y,X
         BCS NOTW
         LDA SBXSTART,Y
@@ -648,7 +695,7 @@ GETL    LDA SBTOP,Y
         CMP TMP
         BEQ ONEND
 NOTW    DEY
-        BPL GETL
+        BPL .GETL
 CRUNCH  SEC
         RTS
 
@@ -721,7 +768,7 @@ NOT     SEC
 TH      CLC
         RTS
 
-BLOCK
+;BLOCK
 
 CLIMB   LDA FIRE,X      ; ACTION 3
         BEQ JOM
@@ -730,7 +777,6 @@ CLIMB   LDA FIRE,X      ; ACTION 3
         ORA UP,X
         ORA DOWN,X
         BNE TRYP2       ; A PUNCH
-
         LDA #AFALL      ; IF NO DIR
         STA ACTION,X    ; FALL ALL
         LDA DIR,X       ; BUILDING
@@ -793,33 +839,40 @@ LEST    LDA COUNT,X
         CLC
         ADC #$1B
         STA FRAME,X
-LES     RTS
+LES
+  RTS
 
-        BLOCK   ; PUNCH FOR CLIMBING
+;BLOCK   ; PUNCH FOR CLIMBING
+
 TRYP2   LDA LEFT,X
-        BEQ .TRR
+        BEQ TRR
         LDA DIR,X
-        BNE .BACKP
-        BEQ .THIW
-.TRR    LDA RIGHT,X
-        BEQ .TRR2
+        BNE BACKP2
+        BEQ THIW
+TRR     LDA RIGHT,X
+        BEQ TRR2
         LDA DIR,X
-        BEQ .BACKP      
-        BNE .THIW
-.TRR2   LDA UP,X
-        BEQ .GOTTB
-        LDY #0
-        LDA #$19                ; PUNCH UP
-        JMP .STF
-.GOTTB  LDA #$1A        ; PUNCH DOWN
-        LDY #1
-        JMP .STF
-.THIW   LDA #23         ; PUNCH LEFT
-        LDY #2  
-        JMP .STF
-.BACKP  LDA #$16        ; PUNCH RIGHT
-        LDY #3
-.STF    STA FRAME,X
+        BEQ BACKP2      
+        BNE THIW
+TRR2
+  LDA UP,X
+  BEQ GOTTB2
+  LDY #0
+  LDA #$19                ; PUNCH UP
+  JMP STF
+GOTTB2
+  LDA #$1A        ; PUNCH DOWN
+  LDY #1
+  JMP STF
+THIW
+  LDA #23         ; PUNCH LEFT
+  LDY #2  
+  JMP STF
+BACKP2
+  LDA #$16        ; PUNCH RIGHT
+  LDY #3
+STF
+  STA FRAME,X
         TYA
         STA HANDY,X
         LDA #APUNCHC
@@ -891,10 +944,12 @@ JUMP    LDA DIR,X       ; ACTION 5
         BMI THIW
         LDA #-2
         +NOPP
-THIW    LDA #2
-        CLC
-        ADC X,X
-        STA X,X
+THIW
+  LDA #2
+  CLC
+  ADC X,X
+  STA X,X
+  
 CHICK   LDY COUNT,X             
         LDA Y,X
         CLC
@@ -912,7 +967,8 @@ CHICK   LDY COUNT,X
         STA ACTION,X
         JSR CHECKF
 
-GRAWL   RTS     ; ACTION 6
+GRAWL
+  RTS     ; ACTION 6
 
 OUCH
   LDA COUNT,X   ; ACTION 7
@@ -997,7 +1053,7 @@ STARE   JSR ANYKEY      ; ACTION 11
         BEQ WALKF
         CMP #ACLIMB
         BNE WHAT
-        JSR @HANDWATER
+        JSR HANDWATER
         BCS WHAT
         LDA #$1B
         +NOPP
@@ -1006,19 +1062,19 @@ WALKF   LDA #8
 WHAT    RTS
 
 OUTOF
-  JSR @HANDWATER
+  JSR HANDWATER
   BCS WHAT
   LDA LASTA,X     
   CMP #AWALK
   BEQ ATN
   CMP #ACLIMB
-  BNE NOM 
+  BNE .NOM 
   LDA #$15
   +NOPP
   
 ATN     LDA #0
         STA FRAME,X
-NOM     RTS     ; STAY AS YOU ARE
+.NOM     RTS     ; STAY AS YOU ARE
 
 ANYKEY  LDA FIRE,X
         ORA LEFT,X
@@ -1027,7 +1083,7 @@ ANYKEY  LDA FIRE,X
         ORA DOWN,X
         RTS
 
-BLOCK   ; ACTION 12
+;BLOCK   ; ACTION 12
 FALL    LDA Y,X
         CLC
         ADC #8
@@ -1036,38 +1092,43 @@ FALL    LDA Y,X
         BCS AAO
         JSR MODEL       
         BCS AAD        ; ON PLAT
-GETL   RTS
+GETL
+  RTS
 
 AAD     LDA Y,X
         AND #15
         CMP #12
-        BEQ NOF
+        BEQ NOF1
         CMP #4
-        BEQ NOF
+        BEQ NOF1
         RTS
 
-AAO    LDA #189+7      ; ?
-        STA Y,X
-NOF    LDA #AWALK
-        STA ACTION,X
-        RTS
+AAO
+  LDA #189+7      ; ?
+  STA Y,X
+  
+NOF1
+  LDA #AWALK
+  STA ACTION,X
+  RTS
 
-MODEL   LDA Y,X
-        LSR ;Implied A
-        LSR ;Implied A
-        LSR ;Implied A
-        TAY
-        LDA X,X
-        LSR ;Implied A
-        LSR ;Implied A
-        JSR MEMXY
-        LDY #0
-        LDA MIKE1,Y
-        CMP #9
-        BEQ AAD
-        CMP #10
-        BEQ AAD
-        CMP #11
+MODEL
+  LDA Y,X
+  LSR ;Implied A
+  LSR ;Implied A
+  LSR ;Implied A
+  TAY
+  LDA X,X
+  LSR ;Implied A
+  LSR ;Implied A
+  JSR MEMXY
+  LDY #0
+  LDA MIKE1,Y
+  CMP #9
+  BEQ AAD
+  CMP #10
+  BEQ AAD
+  CMP #11
         BEQ AAD
         CMP #33
         BEQ ADD
@@ -1096,8 +1157,9 @@ MODEL   LDA Y,X
         CMP #255-32
         RTS
 
-ADD    SEC
-        RTS
+ADD
+  SEC
+  RTS
 
 HITW    !byte 1,0,0
 HITW2   !byte 2,2,1
@@ -1516,7 +1578,8 @@ SD0     LDY #0
         BNE NOE0
         LDA #255
         STA HUSED0
-OFFS    RTS
+OFFS
+  RTS
 
 NOE0    TAY     ; HELI 0
         STA HEACT0
@@ -1578,12 +1641,16 @@ PRT1    LDA #255
         STA NP7+1       
         RTS
 
-SET1    LDA HUSED1
-        BPL OFFS
-FIRS1   LDY #9
-        JSR @RAND
-        AND #7
-        TAY
+SET1
+  LDA HUSED1
+  BPL OFFS
+        
+FIRS1
+  LDY #9
+  JSR RAND
+  AND #7
+  TAY
+  
 EXPI1
   LDA PATHTL,Y
   STA TABML1+0
@@ -1632,19 +1699,20 @@ NOE1    TAY     ; HELI 1
         INY
         LDA TMPMEM,Y
         STA PRT1+1
-NOF     RTS     
+NOF2
+  RTS     
+  ; WORK OUT MEM FOR X,Y
+  ; FOR BIT COLOUR MEMORY
 
-        ; WORK OUT MEM FOR X,Y
-        ; FOR BIT COLOUR MEMORY
-
-MEMXY   CLC
-        ADC COLRAML,Y
-        STA MIKE1+0     ; COLOUR LOW
-        LDA SCREENTEMP
-        EOR #SCEOR      ; NOT BUFFER
-        ADC COLRAMH,Y
-        STA MIKE1+1     ; COLOUR HIGH
-        RTS
+MEMXY
+  CLC
+  ADC COLRAML,Y
+   STA MIKE1+0     ; COLOUR LOW
+   LDA SCREENTEMP
+   EOR #SCEOR      ; NOT BUFFER
+   ADC COLRAMH,Y
+   STA MIKE1+1     ; COLOUR HIGH
+   RTS
 
 COLRAML !byte $00,$28,$50,$78
         !byte $A0,$C8,$F0,$18
@@ -1663,7 +1731,7 @@ COLRAMH !byte 0,0,0,0,0,0
         ; UTILITIES FOR GAME
 
         ; SCAN JOYSTICK
-@JOYGET
+JOYGET
   LDX #0
   LDA CHUMAN,X
   BEQ RJOY
