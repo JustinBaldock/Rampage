@@ -473,7 +473,9 @@ PUTPAT  STA $FFFF,X
         BPL GETPAT
         INY
         CPY #7
-        BNE BUILDSET
+        ;BNE BUILDSET
+        BEQ *+5
+        JMP BUILDSET
 ALLBUILDS       
         DEY
         STY HOWMANY

@@ -1,0 +1,15 @@
+"Relative jump too far" in assembly, and code structure
+
+It is a common problem, and it has a common solution. instead of
+CODE: 
+bne label
+
+Use the below code,
+CODE:
+beq *+5
+jmp label
+
+equivalent for other branches, ie invert the condition and make the branch skip a jmp that will jump to the label.
+
+
+BNE -> BEQ ; Branch Z=0 -> Branch Z=1

@@ -595,7 +595,7 @@ EXI
                 ; PUNCH FOR WALKING
 TRYP1
   LDA LEFT,X
-  BEQ .TRR
+  BEQ TRR
   LDA DIR,X
   BNE EXI ;NOTHN  ; BACKP
   BEQ THIW1
@@ -605,7 +605,7 @@ TRR
   BEQ TRR2
   LDA DIR,X
   BEQ EXI;        NOTHN   ; BACKP 
-  BNE THIL
+  BNE THIW1
 
 TRR2
   LDA UP,X
@@ -667,7 +667,9 @@ CLIMBCHECK
         LDA FIRE,X
         BNE CRUNCH
         LDA UP,X
-        BEQ EXI
+        ;BEQ EXI
+        BNE *+5
+        JMP EXI
         JSR SIDE
         BCC OFE
         RTS     ; C=1 UNDER
@@ -776,7 +778,9 @@ CLIMB   LDA FIRE,X      ; ACTION 3
         ORA LEFT,X
         ORA UP,X
         ORA DOWN,X
-        BNE TRYP2       ; A PUNCH
+        ;BNE TRYP2       ; A PUNCH
+        BEQ *+5
+        JMP TRYP2
         LDA #AFALL      ; IF NO DIR
         STA ACTION,X    ; FALL ALL
         LDA DIR,X       ; BUILDING
@@ -844,54 +848,56 @@ LES
 
 ;BLOCK   ; PUNCH FOR CLIMBING
 
-TRYP2   LDA LEFT,X
-        BEQ TRR
-        LDA DIR,X
-        BNE BACKP2
-        BEQ THIW
-TRR     LDA RIGHT,X
-        BEQ TRR2
-        LDA DIR,X
-        BEQ BACKP2      
-        BNE THIW
-TRR2
+TRYP2
+  LDA LEFT,X
+  BEQ TRR4
+  LDA DIR,X
+  BNE BACKP2
+  BEQ THIW2
+TRR4
+  LDA RIGHT,X
+  BEQ TRR3
+  LDA DIR,X
+  BEQ BACKP2      
+  BNE THIW2
+TRR3
   LDA UP,X
   BEQ GOTTB2
   LDY #0
   LDA #$19                ; PUNCH UP
-  JMP STF
+  JMP STF2
 GOTTB2
   LDA #$1A        ; PUNCH DOWN
   LDY #1
-  JMP STF
-THIW
+  JMP STF2
+THIW2
   LDA #23         ; PUNCH LEFT
   LDY #2  
-  JMP STF
+  JMP STF2
 BACKP2
   LDA #$16        ; PUNCH RIGHT
   LDY #3
-STF
+STF2
   STA FRAME,X
-        TYA
-        STA HANDY,X
-        LDA #APUNCHC
-        STA ACTION,X
-        LDA #0
-        STA COUNT,X
-        LDA DOWN,X
-        BEQ LESB
-        LDA Y,X
-        CLC
-        ADC #4
-        STA Y,X
-        CMP #189+7
-        BCC LES ;B
-        LDA #189+7
-        STA Y,X
-        JMP BTW
-
-LESB    RTS
+  TYA
+  STA HANDY,X
+  LDA #APUNCHC
+  STA ACTION,X
+  LDA #0
+  STA COUNT,X
+  LDA DOWN,X
+  BEQ LESB
+  LDA Y,X
+  CLC
+  ADC #4
+  STA Y,X
+  CMP #189+7
+  BCC LES ;B
+  LDA #189+7
+  STA Y,X
+  JMP BTW
+LESB
+  RTS
         
 OYT02   !byte 6,2,4,4
 OXT12   !byte 0,0,-3,2
@@ -941,10 +947,10 @@ ADR2    LDA COUNT,X
 STEX2   RTS
 
 JUMP    LDA DIR,X       ; ACTION 5
-        BMI THIW
+        BMI THIW3
         LDA #-2
         +NOPP
-THIW
+THIW3
   LDA #2
   CLC
   ADC X,X
@@ -1643,7 +1649,9 @@ PRT1    LDA #255
 
 SET1
   LDA HUSED1
-  BPL OFFS
+  ;BPL OFFS
+  BMI *+5
+  JMP OFFS
         
 FIRS1
   LDY #9
