@@ -1,29 +1,4 @@
-!to "rampage.prm",cbm
 
-*=$0801 
-!byte $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096       ;basic loader
-
-*=$1000 ; start address for 6502 code
-
-; stop getting warnings about unused label
-!nowarn w1000
-
-!macro NOPP
-  !byte $2C
-!end
-
-;!source "ramp.asm"
-!source "build.asm"
-!source "irq.asm"
-!source "debug.asm"
-!source "copy.asm"
-;!source "back.asm"
-!source "move.asm"
-!source "dis.asm"
-!source "djcode.asm"
-!source "ape0.asm"
-!source "ape1.asm"
-!source "ape2.asm"
 
 ; RAMP
 MAIN
@@ -87,7 +62,7 @@ ZEROP   STA D6510,Y
         STA HELLI       ; STOP BIG ONES 
         
         CLI
-        JSR CLEARN      ; NYBBLES
+        JSR SCREENWIPE ; NYBBLES
         JSR CRUM
         LDY #62
         LDA #0
@@ -1824,16 +1799,23 @@ JOYST   LDA CIA1,X
         ROL ;Implied A
         STA FIRE,X
         RTS
+
+; -----
+; 2023/06/26 J.Baldock - appears function to clear the screen.
 SCREENWIPE
-CLEARN  LDY #0
-CLEN    LDA #%00000110
-        STA NYBBLE+$000,Y
-        STA NYBBLE+$100,Y
-        STA NYBBLE+$200,Y
-        STA NYBBLE+$300,Y
-        LDA #0
-        STA $F400,Y
-        STA $F800,Y
-        DEY
-        BNE CLEN
-        RTS
+screenwipe.start
+  LDY #0 ; set loop counter to 0
+screenwipe.loop
+  LDA #%00000110 ; colour 6 = blue
+  ; this section is setting colour memory to blue?
+  STA NYBBLE+$000,Y
+  STA NYBBLE+$100,Y
+  STA NYBBLE+$200,Y
+  STA NYBBLE+$300,Y
+  LDA #0
+  ; this section is clearing ?
+  STA $F400,Y
+  STA $F800,Y
+  DEY ; decrease y
+  BNE screenwipe.loop ; if y NOT 0 then loop
+  RTS

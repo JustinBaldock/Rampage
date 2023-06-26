@@ -1,4 +1,4 @@
-;!PSEUDOPC $7800
+!PSEUDOPC $7800
 
 ;MSW -1
 ;EXEC MAIN         
@@ -581,7 +581,7 @@ C1  = 2 ; LINES TO COMPARE
 THCOL LDA #%11111100
   STA MULTICOL
 
-  ; **************************
+; **************************
   LDA Y+0
   STA YCOR0+1
   CLC
@@ -1486,7 +1486,8 @@ CANCEL  LDY INDEX,X
 
 ;FREQ,NINTS,WAVE,FTYPE,FFREQ,AD,SR,FREQDEC
 
-DATA  !byte 30,1,129,32,35,15,11,30
+DATA
+  !byte 30,1,129,32,35,15,11,30
   !byte 80,4,129,32,70,12,9,10
   !byte 50,2,129,32,50,8,9,64
   !byte 40,3,129,0,100,10,10,20

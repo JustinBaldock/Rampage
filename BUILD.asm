@@ -1,3 +1,29 @@
+!to "rampage.prg",cbm
+
+*=$0801 
+!byte $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096       ;basic loader
+
+*=$1000 ; start address for 6502 code
+
+; stop getting warnings about unused label
+!nowarn w1000
+
+!macro NOPP
+  !byte $2C
+!end
+
+!source "ramp.asm"
+;!source "build.asm"
+!source "irq.asm"
+!source "debug.asm"
+!source "copy.asm"
+;!source "back.asm"
+!source "move.asm"
+!source "dis.asm"
+!source "djcode.asm"
+!source "ape0.asm"
+!source "ape1.asm"
+!source "ape2.asm"
 
 ;MUSIC          = $200  ;to $B00
 DTILES          = $7000  ;to $7500
@@ -30,22 +56,22 @@ BUILDHEIGHT     !byte 8,14,10,6,10,12
 DREQUIRED       !byte 10,12,8,4,10,9
 
 SBTOPTAB
-                !fill 80,[i+1]
-                !fill 128,[i+1]
-                !fill 96,[i+1]
-                !fill 72,[i+1]
-                !fill 120,[i+1]
-                !fill 120,[i+1]
+  !fill 80,[i+1]
+  !fill 128,[i+1]
+  !fill 96,[i+1]
+  !fill 72,[i+1]
+  !fill 120,[i+1]
+  !fill 120,[i+1]
 
 BACKPOINT       !byte 60
 WATERTABLE      !byte 39,47,55,00
 WATERPOINT      !byte 0
 SCREEN          !byte 0
 BUILDSTARTLB
-        !byte 72,32
-        !byte 248,208,168,128,88,48,8
-        !byte 224,184,144,104,64,24
-        !byte 240,200,160,120,80,40,0
+  !byte 72,32
+  !byte 248,208,168,128,88,48,8
+  !byte 224,184,144,104,64,24
+  !byte 240,200,160,120,80,40,0
 
 BUILDSTARTHB
         !byte 3,3
@@ -53,18 +79,21 @@ BUILDSTARTHB
         !byte 1,1,1,1,1,1
         !byte 0,0,0,0,0,0,0
 
-PATTERNHB       !byte <BUILDING1,<BUILDING2,<BUILDING3,<BUILDING4,<BUILDING5,<BUILDING6
-PATTERNLB       !byte >BUILDING1,>BUILDING2,>BUILDING3,>BUILDING4,>BUILDING5,>BUILDING6
+PATTERNHB
+  !byte <BUILDING1,<BUILDING2,<BUILDING3,<BUILDING4,<BUILDING5,<BUILDING6
+PATTERNLB
+  !byte >BUILDING1,>BUILDING2,>BUILDING3,>BUILDING4,>BUILDING5,>BUILDING6
 
 BUILDMAPLB
-        !byte 0,64,128,192,0,64,128,192
+  !byte 0,64,128,192,0,64,128,192
+
 BUILDMAPHB
-        !byte SMDJ,SMDJ,SMDJ,SMDJ  
-        !byte SMDJ+1,SMDJ+1
+  !byte SMDJ,SMDJ,SMDJ,SMDJ  
+  !byte SMDJ+1,SMDJ+1
 
 SCBACKPOINT
-        !byte 40,50,79,70,45,60,55
-        !byte 70,66,42,50,61,53,56,47,74,42        
+  !byte 40,50,79,70,45,60,55
+  !byte 70,66,42,50,61,53,56,47,74,42        
 
 STATUS  !byte 0
 
@@ -90,8 +119,7 @@ NODEM1
         INC STEMP
         LDA STEMP
         CMP #3
-        BNE NODEM2
-        
+        BNE NODEM2   
         LDX #2
 RESED
         LDA ENERGY,X
@@ -114,14 +142,12 @@ INIB1   STA BULLETWIPE,Y
         STA OBJECTWIPE,Y
         DEY             
         BNE INIB1
-
         LDA PLAYCHAR
         STA PLAYCHAR1
         LDA PLAYCHAR+1
         STA PLAYCHAR1+2
         LDA PLAYCHAR+2
         STA PLAYCHAR1+1
-
         LDA #%11011000
         STA $D018       
         LDA #0
@@ -133,45 +159,43 @@ INIB1   STA BULLETWIPE,Y
         JSR RAND
         AND #15
         STA $D023
-
-
-
         LDA SCREEN
         CMP #18
         BNE INI1
-
-
         LDA #255
         STA SCREEN
-INI1    INC SCREEN
-        LDA SCREEN
-        ASL ;Implied A
-        TAY
-        LDA TYPOINT,Y
-        STA SMCBT+1
-        LDA TYPOINT+1,Y
-        STA SMCBT+2
-        LDA BXPOINT,Y
-        STA SMCBX+1
-        LDA BXPOINT+1,Y
-        STA SMCBX+2
-        LDA VICCR2
-        ORA #16
-        STA VICCR2
-        JSR SETUPBUILDINGS
-        JSR COPYSETS
-        JSR SIDWIPE
-        JSR SCREENWIPE
-        RTS     
+
+INI1
+  INC SCREEN
+  LDA SCREEN
+  ASL ;Implied A
+  TAY
+  LDA TYPOINT,Y
+  STA SMCBT+1
+  LDA TYPOINT+1,Y
+  STA SMCBT+2
+  LDA BXPOINT,Y
+  STA SMCBX+1
+  LDA BXPOINT+1,Y
+  STA SMCBX+2
+  LDA VICCR2
+  ORA #16
+  STA VICCR2
+  JSR SETUPBUILDINGS
+  JSR COPYSETS
+  JSR SIDWIPE
+  JSR SCREENWIPE
+  RTS
+  
 FOUND
   INC $D020
   JMP FOUND
   
 DRAWBUILD
-        LDA FIRE+2
-        BEQ NONK        
-        LDA #AEAT
-        STA ACTION
+  LDA FIRE+2
+  BEQ NONK        
+  LDA #AEAT
+  STA ACTION
 
 NONK
         ;LDX #1
@@ -184,7 +208,6 @@ NONK
         JSR CHECKCRUMBLE
         JSR FLIPSCREEN
         JSR AFTERCOLOUR 
-
         JMP CHSCREENDONE
 
 NEWSCREEN
@@ -207,8 +230,7 @@ CHSC1   LDA BUILDTALL,Y
         JMP MAIN
 STILLUP RTS
 
-FLIPSCREEN
-        
+FLIPSCREEN     
         LDA SCREENTEMP
         EOR #SCEOR
         STA SCREENTEMP
@@ -298,28 +320,26 @@ COPYCOL
 COPOUT1 RTS
 
 
-
 COPYCOL2
-        LDY #39
-        
+  LDY #39     
 COPYCOLR2
-       LDX TEMPCOL1+(24*40),Y
-        LDA COLMEM,X
-        STA NYBBLE+(24*40),Y
-        LDX TEMPCOL1+(23*40),Y
-        LDA COLMEM,X
-        STA NYBBLE+(23*40),Y
-        LDX TEMPCOL1+(22*40),Y
-        LDA COLMEM,X
-        STA NYBBLE+(22*40),Y
-        LDX TEMPCOL+(21*40),Y
-        LDA COLMEM,X
-        STA NYBBLE+(21*40),Y
-        LDX TEMPCOL1+(20*40),Y
-        LDA COLMEM,X
-        STA NYBBLE+(20*40),Y
-        LDX TEMPCOL1+(19*40),Y
-        LDA COLMEM,X
+  LDX TEMPCOL1+(24*40),Y
+  LDA COLMEM,X
+  STA NYBBLE+(24*40),Y
+  LDX TEMPCOL1+(23*40),Y
+  LDA COLMEM,X
+  STA NYBBLE+(23*40),Y
+  LDX TEMPCOL1+(22*40),Y
+  LDA COLMEM,X
+  STA NYBBLE+(22*40),Y
+  LDX TEMPCOL+(21*40),Y
+  LDA COLMEM,X
+  STA NYBBLE+(21*40),Y
+  LDX TEMPCOL1+(20*40),Y
+  LDA COLMEM,X
+  STA NYBBLE+(20*40),Y
+  LDX TEMPCOL1+(19*40),Y
+  LDA COLMEM,X
         STA NYBBLE+(19*40),Y
         LDX TEMPCOL1+(18*40),Y
         LDA COLMEM,X
@@ -373,6 +393,8 @@ COPYCOLR2
 COPYCOLR3
   RTS
 
+
+
 CRACKUP
 
 BUILDCRACK
@@ -414,85 +436,94 @@ CRACKEDUP1
         STA CRACKX,X
 CRACKEDUP
         
-
 CRACKEDUP2
         LDA #0
         STA CRACKX,Y
         RTS
 
-
+; -----
+;
 SETUPBUILDINGS
   LDY #0
 BUILDSET
   LDX #0
-SMCBT   LDA $FFFF,Y
-        STA IMTIRED
-        BMI ALLBUILDS
-        LDA #0
-        STA SHIT,Y
-        LDA #6
-        STA SDAMAGE,Y
-        LDA #63
-        STA CRACKX,Y
-        LDA #15
-        STA CRACKING,Y
-SMCBX   LDA $FFFF,Y   ;SMODIFIDED
-        LDX IMTIRED
-        STA SBXSTART,Y
-        STA BUILDDUST,Y
-        CLC
-        ADC BUILDWIDTH1,X
-        SEC
-        SBC #1
-        STA SBXEND,Y
-        LDA SBTOPTAB,X
-        STA SBTOP,Y
-        LDA DREQUIRED,X
-        STA SDAMAGE,Y
-        LDA IMTIRED
-        TAX
-        STA BUILDTYPE,Y
-        LDA BUILDWIDTH,X
-        STA BUILDWIDE,Y
-        LDA BUILDHEIGHT,X
-        STA BUILDTALL,Y
-        LDA BUILDWIDTH1,X
-        STA BUILDWIDE1,Y
-        LDA PATTERNLB,X
-        STA GETPAT+1
-        LDA PATTERNHB,X
-        STA GETPAT+2
-        LDA BUILDMAPLB,Y
-        STA PUTPAT+1
-        LDA BUILDMAPHB,Y
-        STA PUTPAT+2
-        LDX #63
-GETPAT  LDA $FFFF,X
-PUTPAT  STA $FFFF,X
-        DEX
-        BPL GETPAT
-        INY
-        CPY #7
-        ;BNE BUILDSET
-        BEQ *+5
-        JMP BUILDSET
+SMCBT
+  LDA $FFFF,Y
+  STA IMTIRED
+  BMI ALLBUILDS
+  LDA #0
+  STA SHIT,Y
+  LDA #6
+  STA SDAMAGE,Y
+  LDA #63
+  STA CRACKX,Y
+  LDA #15
+  STA CRACKING,Y
+SMCBX
+  LDA $FFFF,Y   ;SMODIFIDED
+  LDX IMTIRED
+  STA SBXSTART,Y
+  STA BUILDDUST,Y
+  CLC
+  ADC BUILDWIDTH1,X
+  SEC
+  SBC #1
+  STA SBXEND,Y
+  LDA SBTOPTAB,X
+  STA SBTOP,Y
+  LDA DREQUIRED,X
+  STA SDAMAGE,Y
+  LDA IMTIRED
+  TAX
+  STA BUILDTYPE,Y
+  LDA BUILDWIDTH,X
+  STA BUILDWIDE,Y
+  LDA BUILDHEIGHT,X
+  STA BUILDTALL,Y
+  LDA BUILDWIDTH1,X
+  STA BUILDWIDE1,Y
+  LDA PATTERNLB,X
+  STA GETPAT+1
+  LDA PATTERNHB,X
+  STA GETPAT+2
+  LDA BUILDMAPLB,Y
+  STA PUTPAT+1
+  LDA BUILDMAPHB,Y
+  STA PUTPAT+2
+  LDX #63
+GETPAT
+  LDA $FFFF,X
+PUTPAT
+  STA $FFFF,X
+  DEX
+  BPL GETPAT
+  INY
+  CPY #7
+  ;BNE BUILDSET
+  ; 2023/06/26 J.Baldock - replace BNE because to far away to use
+  BEQ *+5
+  JMP BUILDSET
 ALLBUILDS       
-        DEY
-        STY HOWMANY
-ALLB1   LDA #0
-        STA SBTOP+1,Y
-        STA SBXEND+1,Y
-        STA SBXSTART+1,Y
-        STA SHIT+1,Y
-        STA SDAMAGE+1,Y
-        STA BUILDTALL+1,Y
-        STA CRACKING+1,Y
-        LDA #63
-        STA CRACKX+1,Y
-        INY
-        CPY #6
-        BNE ALLB1
-        RTS
+  DEY
+  STY HOWMANY
+ALLB1
+  LDA #0
+  STA SBTOP+1,Y
+  STA SBXEND+1,Y
+  STA SBXSTART+1,Y
+  STA SHIT+1,Y
+  STA SDAMAGE+1,Y
+  STA BUILDTALL+1,Y
+  STA CRACKING+1,Y
+  LDA #63
+  STA CRACKX+1,Y
+  INY
+  CPY #6
+  BNE ALLB1
+  RTS
+
+
+
 
 PUTBUILD
         LDY HOWMANY

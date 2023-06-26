@@ -623,40 +623,45 @@ TSMC1   STA $FFFF,Y
     RTS
 
 ;************************************
+; X=TUNE
+PLAYTUNE
+  LDX #0  
+  SEI   ; 0 1 3
+  LDA #0
+  STA $207
+  LDA #>MUSIC     ; FF STOP
+  STA $FFFE
+  LDA #<MUSIC   
+  STA $FFFF
+  JSR SIDWIPE
+  JSR $203
+  INC $207
+  CLI
+  RTS
 
-      ; X=TUNE
-PLAYTUNE  LDX #0  
-    SEI   ; 0 1 3
-    LDA #0
-    STA $207
-    LDA #>MUSIC     ; FF STOP
-    STA $FFFE
-    LDA #<MUSIC   
-    STA $FFFF
-    JSR SIDWIPE
-    JSR $203
-    INC $207
-    CLI
-          RTS
-
+; -----
+; 2023/06/26 J.Baldock - clear all sid settings from D400 to D41C
 SIDWIPE
-    LDA #0
-    LDY #$1C
-RESSID    STA $D400,Y
-    DEY
-    BPL RESSID
-    RTS
+  ; set loop counter and variable
+  LDA #0
+  LDY #$1C
+sidwipe.loop
+  STA $D400,Y
+  DEY
+  BPL sidwipe.loop ; if Y >= 0 then loop
+  RTS
 
 
 
 ;**************************************
 
-MUSIC   PHA   
-    TXA   
-    PHA
-    TYA
-    PHA
-    JSR $0200
+MUSIC
+  PHA   
+  TXA   
+  PHA
+  TYA
+  PHA
+  JSR $0200
     
 NOMUS
   LDA #1    
