@@ -1,4 +1,4 @@
-
+﻿
 
 ; RAMP
 MAIN
@@ -8,175 +8,173 @@ MAIN
   LDY #2
   LDA #0
   STA ENABLE
-  
-ZEROP   STA D6510,Y
-        INY
-        BNE ZEROP       
-        LDA #%00100101
-        STA R6510
-        LDA #%10010100  ; BANK 2
-        STA CIA2
-        LDA #%11011000  ; CHAR $E000
-        STA VICMCR      ; SCR  $F800
-        LDA #%11011000
-        STA VICCR2
-        LDA #%00000011  ; BLANK OUT
-        STA VICCR1
-        LDA #>NMIA
-        STA $FFFA
-        LDA #<NMIA
-        STA $FFFB
-        LDA #>RESET
-        STA $FFFC
-        LDA #<RESET
-        STA $FFFD
-        LDA #>IRQ
-        STA $FFFE
-        LDA #<IRQ
-        STA $FFFF
-        LDA #1
-        STA VICIMR
-        LDA #$7F
-        STA CIA1+13
-        STA CIA2+13
-        LDA CIA1+13
-        LDA CIA2+13
-        LDA #0
-        STA CIA1+14
-        STA CIA1+15
-        STA CIA2+14
-        STA CIA2+15
-        STA NMSB+1
-        STA NMSB2+1
-        STA BALLON
-        STA HEX0
-        STA HEX1
-        STA XCORD+0
-        STA XCORD+1
-
-        STA CIA1+2      ; ELSE DOWN = 1
-        STA RASTER
-        STA APECOUNT    ; ?
-        STA TOGGLE
-        STA OSIL
-        STA HELLI       ; STOP BIG ONES 
-        
-        CLI
-        JSR SCREENWIPE ; NYBBLES
-        JSR CRUM
-        LDY #62
-        LDA #0
-BKANSP  STA BL*64+BANK,Y
-        STA 253*64+BANK,Y     ; ON
-        STA 254*64+BANK,Y     ; BORDER
-        TEMP = ((SO0+0)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO0+1)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO0+2)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO0+3)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO0+4)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO0+5)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO1+0)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO1+1)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO1+2)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO1+3)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO1+4)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO1+5)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO2+0)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO2+1)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO2+2)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO2+3)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO2+4)*64+BANK)
-        STA TEMP,Y
-        TEMP = ((SO2+5)*64+BANK)
-        STA TEMP,Y
-        
-        DEY
-        BPL BKANSP
-        LDA #0
-        STA BORDER
-        STA COLOUR0
-        STA PRIORITY
-        LDA #11
-        STA COLOUR1
-        LDA #15
-        STA COLOUR2
-        LDA #7
-        STA COLOUR3
-        LDA #189+7
-        STA Y+0
-        STA Y+1
-        STA Y+2
-        LDA #%00111111
-        STA MULTICOL
-        LDA #7
-        STA MULTI0
-        LDA #11
-        STA MULTI1
-        LDA #2
-        STA SPC0
-        STA SPC1
-        LDA #8
-        STA SPC2
-        STA SPC3
-        LDA #14
-        STA SPC4
-        STA SPC5
-        LDA #5
-        STA SPC6
-        STA SPC7
-        LDA #1
-        STA HELDIR
-        STA HELDIR+1
-        LDA #0
-        STA XCORD+0
-        STA XCORD+1
-        LDA #50
-        STA HELDLY+0
-        LDA #250
-        STA HELDLY+1
-        LDA #0
-        STA XCORD
-        STA XCORD+1
-        STA DIR+0       ; DIRECTION
-        STA DIR+1       ; FACEING
-        STA DIR+2
-        STA FRAME+0     ; SPRITE FRAME
-        STA FRAME+1
-        STA FRAME+2
-        STA STEP+0      ; WALK FRAME
-        STA STEP+1
-        STA STEP+2
-        STA COUNT+0     ; COUNTER FOR
-        STA COUNT+1     ; ANIMATION
-        STA COUNT+2
-        STA HUSED0
-        STA HUSED1
-        LDA #1          ; 1 WALK
-        STA ACTION+0    ; DOING WHAT
-        STA ACTION+1    ; ACTION
-        STA ACTION+2
-        JSR INITIALISE
-        JSR FIRS0
-        JSR FIRS1
-        LDA #%11111111
-        STA ENABLE
-        JSR AIR
+ZEROP
+  STA D6510,Y
+  INY
+  BNE ZEROP       
+  LDA #%00100101
+  STA R6510
+  LDA #%10010100  ; BANK 2
+  STA CIA2
+  LDA #%11011000  ; CHAR $E000
+  STA VICMCR      ; SCR  $F800
+  LDA #%11011000
+  STA VICCR2 ; Set Vic Control Register 2, 40 Column + Multicolor On
+  LDA #%00000011  ; BLANK OUT
+  STA VICCR1 ; Set Vic Control Register 1, #0 #1 = Vertical Raster Scroll, 24 row, Screen OFF, Text mode
+  LDA #>NMIA
+  STA $FFFA
+  LDA #<NMIA
+  STA $FFFB
+  LDA #>RESET
+  STA $FFFC
+  LDA #<RESET
+  STA $FFFD
+  LDA #>IRQ
+  STA $FFFE
+  LDA #<IRQ
+  STA $FFFF
+  LDA #1
+  STA VICIMR ; Set Vic Interrupt Control Register, Sprite-background collision interrupt enabled
+  LDA #$7F
+  STA CIA1+13
+  STA CIA2+13
+  LDA CIA1+13
+  LDA CIA2+13
+  LDA #0
+  STA CIA1+14
+  STA CIA1+15
+  STA CIA2+14
+  STA CIA2+15
+  STA NMSB+1
+  STA NMSB2+1
+  STA BALLON
+  STA HEX0
+  STA HEX1
+  STA XCORD+0
+  STA XCORD+1
+  STA CIA1+2      ; ELSE DOWN = 1
+  STA RASTER
+  STA APECOUNT    ; ?
+  STA TOGGLE
+  STA OSIL
+  STA HELLI       ; STOP BIG ONES 
+  CLI ; clear interrupt disable (allow interrupts)
+  ;JSR SCREENWIPE ; NYBBLES
+  JSR CRUM
+  LDY #62
+  LDA #0
+BKANSP
+  STA BL*64+BANK,Y
+  STA 253*64+BANK,Y     ; ON
+  STA 254*64+BANK,Y     ; BORDER
+  TEMP = ((SO0+0)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO0+1)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO0+2)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO0+3)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO0+4)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO0+5)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO1+0)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO1+1)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO1+2)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO1+3)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO1+4)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO1+5)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO2+0)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO2+1)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO2+2)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO2+3)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO2+4)*64+BANK)
+  STA TEMP,Y
+  TEMP = ((SO2+5)*64+BANK)
+  STA TEMP,Y  
+  DEY
+  BPL BKANSP
+  LDA #0
+  STA BORDER ; set border black 
+  STA COLOUR0
+  STA PRIORITY
+  LDA #11
+  STA COLOUR1
+  LDA #15
+  STA COLOUR2
+  LDA #7
+  STA COLOUR3
+  LDA #189+7
+  STA Y+0
+  STA Y+1
+  STA Y+2
+  LDA #%00111111
+  STA MULTICOL
+  LDA #7
+  STA MULTI0
+  LDA #11
+  STA MULTI1
+  LDA #2
+  STA SPC0
+  STA SPC1
+  LDA #8
+  STA SPC2
+  STA SPC3
+  LDA #14
+  STA SPC4
+  STA SPC5
+  LDA #5
+  STA SPC6
+  STA SPC7
+  LDA #1
+  STA HELDIR
+  STA HELDIR+1
+  LDA #0
+  STA XCORD+0
+  STA XCORD+1
+  LDA #50
+  STA HELDLY+0
+  LDA #250
+  STA HELDLY+1
+  LDA #0
+  STA XCORD
+  STA XCORD+1
+  STA DIR+0       ; DIRECTION
+  STA DIR+1       ; FACEING
+  STA DIR+2
+  STA FRAME+0     ; SPRITE FRAME
+  STA FRAME+1
+  STA FRAME+2
+  STA STEP+0      ; WALK FRAME
+  STA STEP+1
+  STA STEP+2
+  STA COUNT+0     ; COUNTER FOR
+  STA COUNT+1     ; ANIMATION
+  STA COUNT+2
+  STA HUSED0
+  STA HUSED1
+  LDA #1          ; 1 WALK
+  STA ACTION+0    ; DOING WHAT
+  STA ACTION+1    ; ACTION
+  STA ACTION+2
+  JSR INITIALISE
+  JSR FIRS0
+  JSR FIRS1
+  LDA #%11111111
+  STA ENABLE
+  JSR AIR
 LOOP
   JSR JOYGET      ; JOYGET !!
   LDX #0
@@ -189,12 +187,10 @@ LOOP
   JSR SET1
   LDA CARB+1
   BNE EAR
-  JSR NEWO
-        
+  JSR NEWO       
 EAR
   JSR DRAWBUILD
   LDA SYNC
-
 SMO
   CMP SYNC
   BEQ SMO
@@ -257,24 +253,27 @@ MOVE
   LDA ACTTABH-1,Y
   STA SOMET+2
    
-SOMET   JSR $FFFF       ; SMC
-        LDA ACTION,X    
-        CMP #ADEAD
-        BNE AST
-        RTS
-AST     JSR KILCAR
-        LDA ACTION,X
-        CMP #AWALK
-        BEQ CANBE
-        CMP #ACLIMB
-        BNE MOVM
-CANBE   STA LASTA,X
-        JSR ANYKEY      ; IF NO
-        BNE MOVM        ; MOVEMENT
-        LDA #ASTARE     ; DO A DELAY
-        STA ACTION,X
-MOVM    JMP CREATE
-        
+SOMET
+  JSR $FFFF       ; SMC ; 2023/06/26 J.Baldock - Jump to interrupt service routine
+  LDA ACTION,X    
+  CMP #ADEAD
+  BNE AST
+  RTS
+AST
+  JSR KILCAR
+  LDA ACTION,X
+  CMP #AWALK
+  BEQ CANBE
+  CMP #ACLIMB
+  BNE MOVM
+CANBE
+  STA LASTA,X
+  JSR ANYKEY      ; IF NO
+  BNE MOVM        ; MOVEMENT
+  LDA #ASTARE     ; DO A DELAY
+  STA ACTION,X
+MOVM
+  JMP CREATE    
 
 ;BLOCK           ; ACTION 1
 
@@ -1711,16 +1710,16 @@ COLRAMH !byte 0,0,0,0,0,0
         !byte 3,3,3,3,3
 
 
-        ; UTILITIES FOR GAME
+; UTILITIES FOR GAME
 
-        ; SCAN JOYSTICK
+; -----
+; SCAN JOYSTICK
 JOYGET
   LDX #0
   LDA CHUMAN,X
   BEQ RJOY
   JSR AUTOPLAY
   JMP RJOYA
-  
 RJOY
   STX CIA1+2
   JSR JOYST       ; PORT 1
@@ -1771,34 +1770,33 @@ RJOY1A
   ASL JOY
   ROL ;Implied A
   STA DOWN+2
-
 NOFIRE
   RTS
-
-JOYST   LDA CIA1,X
-        EOR #%00011111
-        STA JOY
-        LDA #0
-        LSR JOY
-        ROL ;Implied A
-        STA UP,X
-        LDA #0
-        LSR JOY
-        ROL ;Implied A
-        STA DOWN,X
-        LDA #0
-        LSR JOY
-        ROL ;Implied A
-        STA LEFT,X
-        LDA #0
-        LSR JOY
-        ROL ;Implied A
-        STA RIGHT,X
-        LDA #0
-        LSR JOY
-        ROL ;Implied A
-        STA FIRE,X
-        RTS
+JOYST
+  LDA CIA1,X
+  EOR #%00011111
+  STA JOY
+  LDA #0
+  LSR JOY
+  ROL ;Implied A
+  STA UP,X
+  LDA #0
+  LSR JOY
+  ROL ;Implied A
+  STA DOWN,X
+  LDA #0
+  LSR JOY
+  ROL ;Implied A
+  STA LEFT,X
+  LDA #0
+  LSR JOY
+  ROL ;Implied A
+  STA RIGHT,X
+  LDA #0
+  LSR JOY
+  ROL ;Implied A
+  STA FIRE,X
+  RTS
 
 ; -----
 ; 2023/06/26 J.Baldock - appears function to clear the screen.

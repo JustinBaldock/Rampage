@@ -12,4 +12,11 @@ jmp label
 equivalent for other branches, ie invert the condition and make the branch skip a jmp that will jump to the label.
 
 
-BNE -> BEQ ; Branch Z=0 -> Branch Z=1
+BNE -> BEQ
+Branch Z=0 -> Branch Z=1
+
+BPL -> BMI
+Branch N=0 -> Branch N=1
+
+BEQ -> BNE
+Branch Z=1 -> Branch Z=0

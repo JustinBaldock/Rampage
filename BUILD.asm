@@ -1,7 +1,7 @@
-!to "rampage.prg",cbm
+﻿!to "rampage.prg",cbm
 
 *=$0801 
-!byte $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096       ;basic loader
+!byte $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096 ;basic loader
 
 *=$1000 ; start address for 6502 code
 
@@ -67,6 +67,7 @@ BACKPOINT       !byte 60
 WATERTABLE      !byte 39,47,55,00
 WATERPOINT      !byte 0
 SCREEN          !byte 0
+
 BUILDSTARTLB
   !byte 72,32
   !byte 248,208,168,128,88,48,8
@@ -1100,8 +1101,7 @@ LOSENERGY
   INC LOSPEED,X
   LDA LOSPEED,X
   AND #7
-  BEQ LOSOME
-  
+  BEQ LOSOME 
 LOSOME
   LDA ENH,X
   BEQ LDEAD
@@ -1112,29 +1112,31 @@ LOSOME
   RTS
        
 GAINENERGY 
-        CLC
-        ADC ENH,X
-        BCS GAOV
-        STA ENH,X
-        JMP SETUPEN
-GAOV    RTS
-LDEAD  LDA ACTION,X     
-        CMP #ATRANS
-        BEQ ALRED
-        CMP #ADIE
-        BEQ ALRED
-        LDA Y,X
-        CMP #189+7
-        
-        BCS GOTRAN
-        LDA #AFALL
-        STA ACTION,X
-        RTS
-GOTRAN  LDA #0
-        STA COUNT,X
-        LDA #ATRANS
-        STA ACTION,X
+  CLC
+  ADC ENH,X
+  BCS GAOV
+  STA ENH,X
+  JMP SETUPEN
+GAOV
+  RTS
 
+LDEAD
+  LDA ACTION,X     
+  CMP #ATRANS
+  BEQ ALRED
+  CMP #ADIE
+  BEQ ALRED
+  LDA Y,X
+  CMP #189+7
+  BCS GOTRAN
+  LDA #AFALL
+  STA ACTION,X
+  RTS
+GOTRAN
+  LDA #0
+  STA COUNT,X
+  LDA #ATRANS
+  STA ACTION,X
 ALRED
   RTS
         
@@ -1207,6 +1209,7 @@ COMP2   LDA CSET1,Y
         DEY
         BPL COMP2
         RTS
+        
 CSET2
         !byte $00,$00,$00,$00,$00,$00,$00,$00
         !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
@@ -1218,8 +1221,6 @@ CSET2
         !byte $DE,$CD,$E3,$E3,$D1,$D4,$83,$83
         !byte $07,$03,$01,$00,$00,$00,$00,$00
         
-
-
 CSET1
         !byte $00,$00,$00,$00,$00,$00,$00,$00
         !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
@@ -1245,27 +1246,26 @@ VALUES
         LSR ;Implied A
         ADC #ZERO
         STA SCORE2+2
-
         RTS
 
 CHUMAN  !byte 3
 
 NEWGAME
-
-        LDA #ZERO
-        LDY #7
-INIY    STA SCORE1,Y
-        STA SCORE2,Y    
-        STA SCORE3,Y
-        DEY
-        BPL INIY        
-        LDA #$FF                
-        STA SCORE1+5
-        STA SCORE2+5
-        STA SCORE3+5
-        LDA #0
-        STA SCREEN
-        LDX #2
+  LDA #ZERO
+  LDY #7
+INIY
+  STA SCORE1,Y
+  STA SCORE2,Y    
+  STA SCORE3,Y
+  DEY
+  BPL INIY        
+  LDA #$FF                
+  STA SCORE1+5
+  STA SCORE2+5
+  STA SCORE3+5
+  LDA #0
+  STA SCREEN
+  LDX #2
 NCOMP
   LDA #64
   STA ENH,X
