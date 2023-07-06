@@ -8,8 +8,8 @@
 ;DSECT
 ;!PSEUDOPC $00
 
-D6510   !fill 1  ; DDR
-R6510   !fill 1  ; I/O PORT
+D6510   = $00  ; DDR
+R6510   = $01  ; I/O PORT
 SYNC    !fill 1
 LEFT    !fill 3
 RIGHT   !fill 3
