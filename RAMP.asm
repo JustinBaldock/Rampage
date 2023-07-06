@@ -1,5 +1,3 @@
-
-
 ; RAMP
 MAIN
   SEI
@@ -23,19 +21,19 @@ ZEROP
   LDA #%00000011  ; BLANK OUT
   STA VICCR1 ; Set Vic Control Register 1, #0 #1 = Vertical Raster Scroll, 24 row, Screen OFF, Text mode
   ; update non-maskable interrupt service routine
-  LDA #>NMIA
-  STA $FFFA
   LDA #<NMIA
+  STA $FFFA
+  LDA #>NMIA
   STA $FFFB
   ; update cold reset routine
-  LDA #>RESET
-  STA $FFFC
   LDA #<RESET
+  STA $FFFC
+  LDA #>RESET
   STA $FFFD
   ; update interrupt service routine
-  LDA #>IRQ
-  STA $FFFE
   LDA #<IRQ
+  STA $FFFE
+  LDA #>IRQ
   STA $FFFF
   LDA #1
   STA VICIMR ; Set Vic Interrupt Control Register, Sprite-background collision interrupt enabled

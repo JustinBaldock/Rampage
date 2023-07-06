@@ -1272,5 +1272,3 @@ NCOMP
   DEX                             
   BPL NCOMP      
   RTS
-
-

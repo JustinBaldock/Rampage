@@ -40,15 +40,3 @@ This part starts at $B27E
 
 BUILD.asm
 Starts with A9 00 8D xx xx AC xx xx
-
-
-Trying to debug ramp.asm I see a problem
-
-  ; update interrupt service routine
-  LDA #>IRQ
-  STA $FFFE
-  LDA #<IRQ
-  STA $FFFF
-
-when I step over each part of this code, the values stores in $FFFE and $FFFF aren't being updated!
-
