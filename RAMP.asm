@@ -1,4 +1,4 @@
-﻿
+
 
 ; RAMP
 MAIN
@@ -7,14 +7,14 @@ MAIN
   TXS
   LDY #2
   LDA #0
-  STA ENABLE
+  STA VIC_SPRITE_ENABLE
 ZEROP
   STA D6510,Y
   INY
   BNE ZEROP       
   LDA #%00100101
   STA R6510
-  LDA #%10010100  ; BANK 2
+  LDA #%10010101  ; VIC BANK2=$8000-$BFFF, BANK3=$C000-$FFFF
   STA CIA2
   LDA #%11011000  ; CHAR $E000
   STA VICMCR      ; SCR  $F800
@@ -22,14 +22,17 @@ ZEROP
   STA VICCR2 ; Set Vic Control Register 2, 40 Column + Multicolor On
   LDA #%00000011  ; BLANK OUT
   STA VICCR1 ; Set Vic Control Register 1, #0 #1 = Vertical Raster Scroll, 24 row, Screen OFF, Text mode
+  ; update non-maskable interrupt service routine
   LDA #>NMIA
   STA $FFFA
   LDA #<NMIA
   STA $FFFB
+  ; update cold reset routine
   LDA #>RESET
   STA $FFFC
   LDA #<RESET
   STA $FFFD
+  ; update interrupt service routine
   LDA #>IRQ
   STA $FFFE
   LDA #<IRQ
@@ -60,7 +63,7 @@ ZEROP
   STA OSIL
   STA HELLI       ; STOP BIG ONES 
   CLI ; clear interrupt disable (allow interrupts)
-  ;JSR SCREENWIPE ; NYBBLES
+  JSR SCREENWIPE ; NYBBLES
   JSR CRUM
   LDY #62
   LDA #0
@@ -173,7 +176,7 @@ BKANSP
   JSR FIRS0
   JSR FIRS1
   LDA #%11111111
-  STA ENABLE
+  STA VIC_SPRITE_ENABLE
   JSR AIR
 LOOP
   JSR JOYGET      ; JOYGET !!
@@ -1804,7 +1807,7 @@ SCREENWIPE
 screenwipe.start
   LDY #0 ; set loop counter to 0
 screenwipe.loop
-  LDA #%00000110 ; colour 6 = blue
+  LDA #%00001110 ; colour 6 = blue
   ; this section is setting colour memory to blue?
   STA NYBBLE+$000,Y
   STA NYBBLE+$100,Y

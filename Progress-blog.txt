@@ -1,0 +1,54 @@
+First tried to use C64 PRG Studio to create a modern version. I had some problems with functions and struggled for a while.
+Then I tried C64 Studio and felt like I was having more success.
+I had to find PDS documentation so I could work out what some of the pseudo code commands were doing.
+After several days I got it to a point were it compiled. But it doesn't run. I tried to do some debugging without luck.
+I figured I should compare it to the original release and see where the code was placed.
+I loaded up the game in Vice and took a snapshot. I then carved out the $FFFF bytes and saved as a hex file. I then searched for machine code.
+
+RAMP.asm starts with 
+SEI
+LDX #255
+machine code = 78 A2 FF
+I could only find that code in one place, $8311
+
+COPY.asm starts with
+some code, there are 3 x INX, machine code = E8 E8 E8
+Only find code in one place, $B3F3
+
+DEBUG.asm starts with
+CLC ADC $f4 = 18 69 f4
+Only find code in one place, $9DDF
+
+DIS.asm starts with
+LDA #1 JSR = a9 01 20
+Found two places, 
+
+IRQ.asm has code 
+AND #1 beq = 29 01 f0
+Found 3 places, 
+LDA CIA2+13 = ad/a5 dd 0d 85/8d xx xx 29 02
+I think this starts at $77FD
+
+DJCODE.asm
+Has some code close to start with LSR LSR LSR SEC SBC = 4A 4A 4A 38 f9
+Found 3 places! Last place.$A5C5, back tracing a bit, 
+I think this part starts at $A592
+
+MOVE.asm
+10 xx 60 BD, with bunch of tracing
+This part starts at $B27E
+
+BUILD.asm
+Starts with A9 00 8D xx xx AC xx xx
+
+
+Trying to debug ramp.asm I see a problem
+
+  ; update interrupt service routine
+  LDA #>IRQ
+  STA $FFFE
+  LDA #<IRQ
+  STA $FFFF
+
+when I step over each part of this code, the values stores in $FFFE and $FFFF aren't being updated!
+
