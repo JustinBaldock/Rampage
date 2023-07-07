@@ -6,10 +6,12 @@ MAIN
   LDY #2
   LDA #0
   STA VIC_SPRITE_ENABLE
+  
 .ZEROP ; Start at $00, offset 2 and set all zero page to 0
   STA D6510,Y
   INY
-  BNE .ZEROP       
+  BNE .ZEROP
+  
   LDA #%00100101 ; bank the kernal rom out
   STA R6510
   LDA #%10010101  ; VIC BANK2=$8000-$BFFF, BANK3=$C000-$FFFF
@@ -21,19 +23,19 @@ MAIN
   LDA #%00000011  ; BLANK OUT
   STA VICCR1 ; Set Vic Control Register 1, #0 #1 = Vertical Raster Scroll, 24 row, Screen OFF, Text mode
   ; update non-maskable interrupt service routine
-  LDA #>NMIA
-  STA $FFFA
   LDA #<NMIA
+  STA $FFFA
+  LDA #>NMIA
   STA $FFFB
   ; update cold reset routine
-  LDA #>RESET
-  STA $FFFC
   LDA #<RESET
+  STA $FFFC
+  LDA #>RESET
   STA $FFFD
   ; update interrupt service routine
-  LDA #>IRQ
-  STA $FFFE
   LDA #<IRQ
+  STA $FFFE
+  LDA #>IRQ
   STA $FFFF
   LDA #1
   STA VICIMR ; Set Vic Interrupt Control Register, Sprite-background collision interrupt enabled
@@ -65,7 +67,8 @@ MAIN
   JSR CRUM
   LDY #62
   LDA #0
-BKANSP
+  
+.BKANSP
   STA BL*64+BANK,Y
   STA 253*64+BANK,Y     ; ON
   STA 254*64+BANK,Y     ; BORDER
@@ -106,7 +109,7 @@ BKANSP
   TEMP = ((SO2+5)*64+BANK)
   STA TEMP,Y  
   DEY
-  BPL BKANSP
+  BPL .BKANSP
   LDA #0
   STA BORDER ; set border black 
   STA COLOUR0
@@ -545,24 +548,24 @@ CHK0
 
 CHK1
   LDA HEY1
-        LSR ;Implied A
-        LSR ;Implied A
-        LSR ;Implied A
-        SEC
-        SBC #5
-        STA YTEMP
-        LDA HEX1
-        CMP #8
-        BCC EXI
-        CMP #$9E
-        BCS EXI
-        LSR ;Implied A
-        LSR ;Implied A   
-        SEC
-        SBC #2
-        STA XTEMP
-        CLC
-        RTS
+  LSR ;Implied A
+  LSR ;Implied A
+  LSR ;Implied A
+  SEC
+  SBC #5
+  STA YTEMP
+  LDA HEX1
+  CMP #8
+  BCC EXI
+  CMP #$9E
+  BCS EXI
+  LSR ;Implied A
+  LSR ;Implied A   
+  SEC
+  SBC #2
+  STA XTEMP
+  CLC
+  RTS
 
 EXI
   SEC
