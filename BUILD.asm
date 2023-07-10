@@ -1,33 +1,8 @@
-!to "rampage.prg",cbm
 
-*=$0801 
-!byte $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096 ;basic loader
-
-*=$1000 ; start address for 6502 code
-
-; stop getting warnings about unused label
-!nowarn w1000
-
-!macro NOPP
-  !byte $2C
-!end
-
-!source "ramp.asm"
-;!PSEUDOPC $7800
-!source "irq.asm"
-;!source "build.asm"
-!source "debug.asm"
-!source "copy.asm"
-!source "djcode.asm"
-!source "move.asm"
-!source "dis.asm"
-!source "ape0.asm"
-!source "ape1.asm"
-!source "ape2.asm"
 
 ;MUSIC          = $200  ;to $B00
 DTILES          = $7000  ;to $7500
-BACKDROP        = $B00 ;to 1300
+BACKDROP        = $0B00 ;to 1300
 COLMEM          = $1300
 COLMEM1         = $1400
 BLSTART         = $3C10 ;to 4000      ; BLOCK
@@ -75,15 +50,16 @@ BUILDSTARTLB
   !byte 240,200,160,120,80,40,0
 
 BUILDSTARTHB
-        !byte 3,3
-        !byte 2,2,2,2,2,2,2
-        !byte 1,1,1,1,1,1
-        !byte 0,0,0,0,0,0,0
+  !byte 3,3
+  !byte 2,2,2,2,2,2,2
+  !byte 1,1,1,1,1,1
+  !byte 0,0,0,0,0,0,0
 
-PATTERNHB
-  !byte <BUILDING1,<BUILDING2,<BUILDING3,<BUILDING4,<BUILDING5,<BUILDING6
 PATTERNLB
+  !byte <BUILDING1,<BUILDING2,<BUILDING3,<BUILDING4,<BUILDING5,<BUILDING6
+PATTERNHB
   !byte >BUILDING1,>BUILDING2,>BUILDING3,>BUILDING4,>BUILDING5,>BUILDING6
+
 
 BUILDMAPLB
   !byte 0,64,128,192,0,64,128,192
@@ -179,9 +155,9 @@ INI1
   STA SMCBX+1
   LDA BXPOINT+1,Y
   STA SMCBX+2
-  LDA VICCR2
+  LDA VIC_CONTROL_REGISTER2
   ORA #16
-  STA VICCR2
+  STA VIC_CONTROL_REGISTER2
   JSR SETUPBUILDINGS
   JSR COPYSETS
   JSR SIDWIPE
@@ -212,8 +188,8 @@ NONK
         JMP CHSCREENDONE
 
 NEWSCREEN
-        JSR DRIVER      ;INTER CITY
-        JMP MAIN
+  JSR DRIVER      ;INTER CITY
+  JMP MAIN
 
 CHSCREENDONE
         INC CBYTE
@@ -222,14 +198,17 @@ CHSCREENDONE
         BEQ CHSC2
         RTS
 
-CHSC2   LDY HOWMANY
-CHSC1   LDA BUILDTALL,Y
-        BNE STILLUP
-        DEY
-        BPL CHSC1
-        JSR DRIVER      ;INTERCITYREPORT
-        JMP MAIN
-STILLUP RTS
+CHSC2
+  LDY HOWMANY
+CHSC1
+  LDA BUILDTALL,Y
+  BNE STILLUP
+  DEY
+  BPL CHSC1
+  JSR DRIVER      ;INTERCITYREPORT
+  JMP MAIN
+STILLUP
+  RTS
 
 FLIPSCREEN     
         LDA SCREENTEMP
@@ -238,10 +217,10 @@ FLIPSCREEN
         LDA SCREENCHSET ; FROM $F000
         EOR #CHEOR      ; TO   $E000
         STA SCREENCHSET
-        LDA VICMCR
+        LDA VIC_MEMORY_CONTROL_REGISTER
         AND #%00001111
         ORA SCREENCHSET
-        STA VICMCR
+        STA VIC_MEMORY_CONTROL_REGISTER
         LDA SCREENTEMP
         CMP #$F8
         BEQ COPYCOL1
@@ -402,45 +381,49 @@ BUILDCRACK
   TAX
   PHA
   
-BCRAK   LDA BUILDMAPLB,X
-        STA CRACK+1
-        STA CRACK1+1
-        LDA BUILDMAPHB,X
-        STA CRACK+2
-        STA CRACK1+2
-        LDA CRACKX,X
-        BEQ CRACKEDUP1
-        LDY BUILDWIDE,X
-        TAX
-CRACK   LDA $FFFF,X
-        CMP #$64
-        BCS CRACK2
-        ;CLC    
-        ;AND #32
-        ADC #$64
-CRACK1  STA $FFFF,X
-CRACK2  DEX
-        BMI CRACKEDUP1
-        DEY
-        BNE CRACK
-        PLA
-        TAY
-        TXA
-        STA CRACKX,Y
-        BMI CRACKEDUP2
-        RTS
+BCRAK
+  LDA BUILDMAPLB,X
+  STA CRACK+1
+  STA CRACK1+1
+  LDA BUILDMAPHB,X
+  STA CRACK+2
+  STA CRACK1+2
+  LDA CRACKX,X
+  BEQ CRACKEDUP1
+  LDY BUILDWIDE,X
+  TAX
+CRACK
+  LDA $FFFF,X
+  CMP #$64
+  BCS CRACK2
+  ;CLC    
+  ;AND #32
+  ADC #$64
+CRACK1
+  STA $FFFF,X
+CRACK2
+  DEX
+  BMI CRACKEDUP1
+  DEY
+  BNE CRACK
+  PLA
+  TAY
+  TXA
+  STA CRACKX,Y
+  BMI CRACKEDUP2
+  RTS
 
 CRACKEDUP1
-        PLA
-        TAX
-        LDA #0
-        STA CRACKX,X
+  PLA
+  TAX
+  LDA #0
+  STA CRACKX,X
 CRACKEDUP
         
 CRACKEDUP2
-        LDA #0
-        STA CRACKX,Y
-        RTS
+  LDA #0
+  STA CRACKX,Y
+  RTS
 
 ; -----
 ;
@@ -527,25 +510,28 @@ ALLB1
 
 
 PUTBUILD
-        LDY HOWMANY
-BUILDV  LDA BUILDTALL,Y
-        BNE NOBUIL1
-        JMP NOBUIL
-NOBUIL1 STA BUILDY
-        LDA BUILDMAPLB,Y
-        STA BLPOINT+1
-        LDA BUILDMAPHB,Y
-        STA BLPOINT+2
-        LDX BUILDTALL,Y
-        LDA BUILDSTARTLB,X
-        CLC
-        ADC BUILDDUST,Y
-        STA SCRPOINT+1
-        LDA BUILDSTARTHB,X
-        ADC SCREENTEMP
-        STA SCRPOINT+2
-BUILDH  LDA BUILDWIDE,Y
-        STA BUILDX
+  LDY HOWMANY
+BUILDV
+  LDA BUILDTALL,Y
+  BNE NOBUIL1
+  JMP NOBUIL
+NOBUIL1
+  STA BUILDY
+  LDA BUILDMAPLB,Y
+  STA BLPOINT+1
+  LDA BUILDMAPHB,Y
+  STA BLPOINT+2
+  LDX BUILDTALL,Y
+  LDA BUILDSTARTLB,X
+  CLC
+  ADC BUILDDUST,Y
+  STA SCRPOINT+1
+  LDA BUILDSTARTHB,X
+  ADC SCREENTEMP
+  STA SCRPOINT+2
+BUILDH
+  LDA BUILDWIDE,Y
+  STA BUILDX
 BLPOINT LDA $FFFF
         STA DEFPOINT+1
         LDA #0          ;<(BLSTART/4)
@@ -556,10 +542,10 @@ BLPOINT LDA $FFFF
         STA DEFPOINT+2
         LDA DEFPOINT+1
         CLC
-        ADC #>BLSTART
+        ADC #<BLSTART
         STA DEFPOINT+1
         LDA DEFPOINT+2
-        ADC #<BLSTART
+        ADC #>BLSTART
         STA DEFPOINT+2
 PUTLEVEL
         JSR TILEPUT
@@ -600,28 +586,33 @@ NOBUIL  DEY
         JMP BUILDV
 PUTBEXIT        RTS
 
-TILEPUT LDA #1
-        STA COUNT2
-TLOOP   LDX #1
-DEFPOINT        LDA $FFFF,X
-SCRPOINT        STA $FFFF,X
-        DEX
-        BPL DEFPOINT
-        LDA DEFPOINT+1
-        CLC
-        ADC #2
-        STA DEFPOINT+1
-        BCC SPEED2
-        INC DEFPOINT+2
+TILEPUT
+  LDA #1
+  STA COUNT2
+TLOOP
+  LDX #1
+DEFPOINT
+  LDA $FFFF,X
+SCRPOINT
+  STA $FFFF,X
+  DEX
+  BPL DEFPOINT
+  LDA DEFPOINT+1
+  CLC
+  ADC #2
+  STA DEFPOINT+1
+  BCC SPEED2
+  INC DEFPOINT+2
 SPEED2  CLC
-        LDA SCRPOINT+1
-        ADC #40
-        STA SCRPOINT+1
-        BCC SPEED1
-        INC SCRPOINT+2
-SPEED1  DEC COUNT2
-        BPL TLOOP
-        RTS
+  LDA SCRPOINT+1
+  ADC #40
+  STA SCRPOINT+1
+  BCC SPEED1
+  INC SCRPOINT+2
+SPEED1
+  DEC COUNT2
+  BPL TLOOP
+  RTS
 DMOUNTSJ
   JMP DMOUNTS
 BACKDROPDRAW
@@ -803,8 +794,7 @@ MOUNT1
         RTS                             
 
 DMOUNTS1
-
-      LDX #39
+  LDX #39
         
 MOUNT2  LDA MOUNT+(BW*00),Y 
         STA $F800+(40*03),X
@@ -1006,10 +996,10 @@ OPSMC
   RTS             
         
 ITSAWINDOW
-        TXA
-        STA BUILD,Y
-        CLC
-        RTS
+  TXA
+  STA BUILD,Y
+  CLC
+  RTS
 
 BUILDING1
         !byte $20,$21,$22,$23
@@ -1030,7 +1020,6 @@ BUILDING2
         !byte $62,$63,$5F,$4E,$4D
 
 BUILDING3
-
         !byte $24,$25,$26,$27
         !byte $34,$35,$36,$37
         !byte $34,$35,$36,$37
@@ -1064,11 +1053,14 @@ BUILDING6
 AS      = 34
 AS1     = 8
 DAMAGETEXT
-        !byte AS1+4,AS1+1,AS1+13,AS1+1,AS1+7,AS1+5,1
+  !byte AS1+4,AS1+1,AS1+13,AS1+1,AS1+7,AS1+5,1
+
 GEORGETEXT
-        !byte AS1+7,AS1+5,AS1+15,AS1+18,AS1+7,AS1+5
+  !byte AS1+7,AS1+5,AS1+15,AS1+18,AS1+7,AS1+5
+
 RALPHTEXT
-        !byte AS1+18,AS1+1,AS1+12,AS1+16,AS1+8,1
+  !byte AS1+18,AS1+1,AS1+12,AS1+16,AS1+8,1
+
 LIZZYTEXT
         !byte AS1+12,AS1+9,AS1+26,AS1+26,AS1+25,1
         !byte AS1+18,AS1+8,AS1+15,AS1+14,AS1+1,1,1,1

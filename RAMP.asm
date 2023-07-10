@@ -1,3 +1,30 @@
+!to "rampage.prg",cbm
+
+*=$0801 
+!byte $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096 ;basic loader
+
+; stop getting warnings about unused label
+!nowarn w1000
+
+!macro NOPP
+  !byte $2C
+!end
+
+;!source "ramp.asm"
+*=$7800
+;!PSEUDOPC $7800
+!source "build.asm"
+!source "irq.asm"
+!source "debug.asm"
+!source "copy.asm"
+!source "djcode.asm"
+!source "move.asm"
+!source "dis.asm"
+!source "ape0.asm"
+!source "ape1.asm"
+!source "ape2.asm"
+
+*=$1000 ; start address for 6502 code
 ; RAMP
 MAIN
   SEI
@@ -14,14 +41,14 @@ MAIN
   
   LDA #%00100101 ; bank the kernal rom out
   STA R6510
-  LDA #%10010101  ; VIC BANK2=$8000-$BFFF, BANK3=$C000-$FFFF
+  LDA #%10010101  ; VIC Bit 1-0 = $01 which is Bank2, BANK2=$8000-$BFFF, BANK3=$C000-$FFFF
   STA CIA2
   LDA #%11011000  ; CHAR $E000
-  STA VICMCR      ; SCR  $F800
+  STA VIC_MEMORY_CONTROL_REGISTER      ; SCR  $F800
   LDA #%11011000
-  STA VICCR2 ; Set Vic Control Register 2, 40 Column + Multicolor On
+  STA VIC_CONTROL_REGISTER2 ; Set Vic Control Register 2, No horizontal scroll, 40 Column + Multicolor On
   LDA #%00000011  ; BLANK OUT
-  STA VICCR1 ; Set Vic Control Register 1, #0 #1 = Vertical Raster Scroll, 24 row, Screen OFF, Text mode
+  STA VIC_CONTROL_REGISTER1 ; Set Vic Control Register 1, Vertical Scroll, 24 row, Screen OFF, Text mode
   ; update non-maskable interrupt service routine
   LDA #<NMIA
   STA $FFFA
@@ -217,22 +244,6 @@ AEAT      = 14
 ADEAD     = 15
         ; DIRECTION 0 FACING LEFT
 ACTTABL 
-        !byte >WALK
-        !byte >PUNCHW
-        !byte >CLIMB
-        !byte >PUNCHC
-        !byte >JUMP
-        !byte >GRAWL
-        !byte >OUCH
-        !byte >SUPRISE
-        !byte >TRANS
-        !byte >DIE
-        !byte >STARE
-        !byte >FALL
-        !byte >GROWL
-        !byte >EAT
-        !byte >DEAD
-ACTTABH
         !byte <WALK
         !byte <PUNCHW
         !byte <CLIMB
@@ -248,6 +259,22 @@ ACTTABH
         !byte <GROWL
         !byte <EAT
         !byte <DEAD
+ACTTABH
+        !byte >WALK
+        !byte >PUNCHW
+        !byte >CLIMB
+        !byte >PUNCHC
+        !byte >JUMP
+        !byte >GRAWL
+        !byte >OUCH
+        !byte >SUPRISE
+        !byte >TRANS
+        !byte >DIE
+        !byte >STARE
+        !byte >FALL
+        !byte >GROWL
+        !byte >EAT
+        !byte >DEAD
 ENDLABEL1
 
 MOVE
@@ -281,8 +308,9 @@ MOVM
 
 ;BLOCK           ; ACTION 1
 
-WALK    JSR WA
-        JSR CLIM
+WALK
+  JSR WA
+  JSR CLIM
 CHECKF
   LDA Y,X
         CMP #189+7      ; IF ON GROUND
@@ -1326,7 +1354,8 @@ STG     LDA LASTA,X
         RTS
 
 
-GRFT    !byte 1,2,0,1,1,2,0,1,2,0
+GRFT
+  !byte 1,2,0,1,1,2,0,1,2,0
 
 EAT     LDA COUNT,X     ; ACTION 13
         CLC
@@ -1349,31 +1378,35 @@ ONB     LDY COUNT,X
         STA FRAME,X     
         RTS
 
-DEAD    RTS
+DEAD
+  RTS
 
 
-CLIMEAT !byte $05,$05,$05
-                !byte $05,$05,$05
-                !byte $0F,$0F,$0F
-                !byte $10,$10,$10
-                !byte $11,$11,$11
-                !byte $10,$10,$10
-                !byte $11,$0F,$10
-                !byte $11,$11
-WALKEAT         !byte $0D,$0D,$0D
-                !byte $0D,$0D,$0D
-                !byte $12,$12,$12
-                !byte $13,$13,$13
-                !byte $14,$14,$14
-                !byte $12,$12,$12
-                !byte $12,$13,$14
-                !byte $12,$13
+CLIMEAT
+  !byte $05,$05,$05
+  !byte $05,$05,$05
+  !byte $0F,$0F,$0F
+  !byte $10,$10,$10
+  !byte $11,$11,$11
+  !byte $10,$10,$10
+  !byte $11,$0F,$10
+  !byte $11,$11
+WALKEAT
+  !byte $0D,$0D,$0D
+  !byte $0D,$0D,$0D
+  !byte $12,$12,$12
+  !byte $13,$13,$13
+  !byte $14,$14,$14
+  !byte $12,$12,$12
+  !byte $12,$13,$14
+  !byte $12,$13
 
-STG2    LDA LASTA,X
-        STA ACTION,X
-        LDA #0
-        STA COUNT,X
-        RTS
+STG2
+  LDA LASTA,X
+  STA ACTION,X
+  LDA #0
+  STA COUNT,X
+  RTS
 
 O       = 189+7+20    ; SPRITE OFFSET
 ONBX    !byte 0,0,0
@@ -1437,14 +1470,14 @@ CADT    !byte 1,2,-1,-2
         ; AND ROUTINES
         ; CALLED FROM RASTER IRQ
 
-MOVTL   !byte >HM0,>HM1,>HM2,>HM3  
-        !byte >HM4,>HM5,>HM6,>HM7
-        !byte >HM8,>HM9,>HM10,>HM11
-        !byte >HM12
-MOVTH   !byte <HM0,<HM1,<HM2,<HM3  
+MOVTL   !byte <HM0,<HM1,<HM2,<HM3  
         !byte <HM4,<HM5,<HM6,<HM7
         !byte <HM8,<HM9,<HM10,<HM11
         !byte <HM12
+MOVTH   !byte >HM0,>HM1,>HM2,>HM3  
+        !byte >HM4,>HM5,>HM6,>HM7
+        !byte >HM8,>HM9,>HM10,>HM11
+        !byte >HM12
         
 HM0     !byte 0,-1,0+SS0
 HM1     !byte -1,0,4+SS0
@@ -1526,13 +1559,13 @@ M8      !byte 8,10
 HECYT1  !byte 180,190,195,170,180,190,160,160,160
 HECXT1  !byte 180,180,180,0,180,180,0,180,160
 
-PATHTL  !byte >(M0-2),>(M1-2),>(M2-2)
-        !byte >(M3-2),>(M4-2),>(M5-2)
-        !byte >(M6-2),>(M7-2),>(M8-2)
-
-PATHTH  !byte <(M0-2),<(M1-2),<(M2-2)
+PATHTL  !byte <(M0-2),<(M1-2),<(M2-2)
         !byte <(M3-2),<(M4-2),<(M5-2)
         !byte <(M6-2),<(M7-2),<(M8-2)
+
+PATHTH  !byte >(M0-2),>(M1-2),>(M2-2)
+        !byte >(M3-2),>(M4-2),>(M5-2)
+        !byte >(M6-2),>(M7-2),>(M8-2)
 
 SET0    LDA HUSED0
         BPL OFFS

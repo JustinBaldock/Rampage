@@ -508,8 +508,8 @@ BULLETYPE !byte 0
 DIRECTION !byte 0
 MANWY     !byte 5,20,15,17,4,5,6,8,10
 MANWX     !byte 10,20,12,4,5,6,16,2,20,26
-BUDIRECTL !byte >-40,>-39,>1,>41,>40,>39,>-1,>-41,0
-BUDIRECTH !byte <-40,<-39,<1,<41,<40,<39,<-1,<-41,0
+BUDIRECTL !byte <-40,<-39,<1,<41,<40,<39,<-1,<-41,0
+BUDIRECTH !byte >-40,>-39,>1,>41,>40,>39,>-1,>-41,0
 BULXDIR   !byte 0,1,1,1,0,-1,-1,-1,0
 BULYDIR   !byte -1,-1,0,1,1,1,0,-1,0
 
@@ -543,8 +543,7 @@ BUILDWIDE1 !fill 8,$FF
 BUILDTALL  !fill 8,$FF
 BUILDDUST  !fill 8,$FF
   
-
-BULL8H
+BULL8L
           !byte <((0*8)+CBASE)
           !byte <((1*8)+CBASE)
           !byte <((2*8)+CBASE)
@@ -578,7 +577,7 @@ BULL8H
           !byte <((30*8)+CBASE)
           !byte <((31*8)+CBASE)
 
-BULL8L
+BULL8H
           !byte >((0*8)+CBASE)
           !byte >((1*8)+CBASE)
           !byte >((2*8)+CBASE)
@@ -611,6 +610,7 @@ BULL8L
           !byte >((29*8)+CBASE)
           !byte >((30*8)+CBASE)
           !byte >((31*8)+CBASE)
+
 BULLETMASK
           !byte %11111111
           !byte %11111111
@@ -664,34 +664,6 @@ OBJECTEND
   !byte $FF
 
 MULT40L
-  !word >0*40
-  !word >1*40
-  !word >2*40
-  !word >3*40
-  !word >4*40
-  !word >5*40
-  !word >6*40
-  !word >7*40
-  !word >8*40
-  !word >9*40
-  !word >10*40
-  !word >11*40
-  !word >12*40
-  !word >13*40
-  !word >14*40
-  !word >15*40
-  !word >16*40
-  !word >17*40
-  !word >18*40
-  !word >19*40
-  !word >20*40
-  !word >21*40
-  !word >22*40
-  !word >23*40
-  !word >24*40
-  !word >25*40
-
-MULT40H
   !word <0*40
   !word <1*40
   !word <2*40
@@ -718,6 +690,34 @@ MULT40H
   !word <23*40
   !word <24*40
   !word <25*40
+
+MULT40H
+  !word >0*40
+  !word >1*40
+  !word >2*40
+  !word >3*40
+  !word >4*40
+  !word >5*40
+  !word >6*40
+  !word >7*40
+  !word >8*40
+  !word >9*40
+  !word >10*40
+  !word >11*40
+  !word >12*40
+  !word >13*40
+  !word >14*40
+  !word >15*40
+  !word >16*40
+  !word >17*40
+  !word >18*40
+  !word >19*40
+  !word >20*40
+  !word >21*40
+  !word >22*40
+  !word >23*40
+  !word >24*40
+  !word >25*40
 
 BXPOINT
   !word BXS0,BXS1,BXS2,BXS3,BXS4

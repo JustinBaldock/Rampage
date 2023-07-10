@@ -88,19 +88,14 @@ EATLIS
   BEQ EATIT
   CMP CGET4
   BEQ EATIT
-       DEY
+  DEY
   BNE EATLIS
-       JMP SMASHOLE
+  JMP SMASHOLE
 EATIT
   LDA #AEAT
   STA ACTION,X
-  
-
 
 SMASHOLE
-
-  
-  
     
 PUNCHCHECK
   STX XSAFE 
@@ -138,15 +133,9 @@ GOTBUILD
 
   STA FISTY
   LSR ;Implied A
-  STA YHEIGHT
-    
-          
+  STA YHEIGHT      
     
 CALCTILE  
-    
-    
-    
-
     LDA BUILDMAPHB,X
   
     STA HOLE+1
@@ -157,7 +146,7 @@ CALCTILE
     STA HOLE  ; !!!
     STA HOLESIDE  
     CLC
-        ADC BUILDWIDE,X
+    ADC BUILDWIDE,X
     STA HOLEDOWN
     
     LDA HOLE
@@ -176,29 +165,29 @@ CALCTILE
     STA PUNCHX
     BNE NLEFT
     INC HOLESIDE          
-NLEFT   CMP BUILDWIDE,X
-    BNE DEMOQ   
-    DEC HOLESIDE
-DEMOQ
-      
-    LDA YHEIGHT
-        TAY
-          BEQ ONTOPL
-    LDA #0
-    CLC
-OFF1           ADC BUILDWIDE,X
-    DEY
-    BNE OFF1
+NLEFT
+  CMP BUILDWIDE,X
+  BNE DEMOQ   
+  DEC HOLESIDE
+
+DEMOQ      
+  LDA YHEIGHT
+  TAY
+  BEQ ONTOPL
+  LDA #0
+  CLC
+
+OFF1 
+  ADC BUILDWIDE,X
+  DEY
+  BNE OFF1
 ONTOPL
-    CLC
-    ADC PUNCHX
-        TAY
-    STY DAVE1
-    STX TEMPX
-    
-    
-
-
+  CLC
+  ADC PUNCHX
+  TAY
+  STY DAVE1
+  STX TEMPX
+      
 FINE      
   LDA HOLE,Y
   TAX
@@ -266,14 +255,16 @@ POINTS
     LDX #0
     JSR SOUND
 
-SMASHED RTS 
+SMASHED
+  RTS 
+
 UPDATE      !byte 0
 
 PRINTOUT1
   STA UPDATE
 PRINTOUT
   RTS
-    LDA UPDATE
+  LDA UPDATE
   AND #15   
   CLC
   ADC #ZERO     
