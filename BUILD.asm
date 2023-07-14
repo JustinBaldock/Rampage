@@ -1,17 +1,6 @@
-
-
-;MUSIC          = $200  ;to $B00
-DTILES          = $7000  ;to $7500
-BACKDROP        = $0B00 ;to 1300
-COLMEM          = $1300
-COLMEM1         = $1400
-BLSTART         = $3C10 ;to 4000      ; BLOCK
 SMDJ            = $75   ; +$76
-CODE            = $7800
 BW              = 79
 ZERO            = 64
-TEMPCOL         = $F400
-TEMPCOL1        = $F800
 BACKWIDE        = 80
 BACKTALL        = 12
 SCREENTEMP      = $F8
@@ -54,25 +43,105 @@ BUILDSTARTHB
   !byte 2,2,2,2,2,2,2
   !byte 1,1,1,1,1,1
   !byte 0,0,0,0,0,0,0
-
 PATTERNLB
   !byte <BUILDING1,<BUILDING2,<BUILDING3,<BUILDING4,<BUILDING5,<BUILDING6
 PATTERNHB
   !byte >BUILDING1,>BUILDING2,>BUILDING3,>BUILDING4,>BUILDING5,>BUILDING6
-
-
 BUILDMAPLB
   !byte 0,64,128,192,0,64,128,192
-
 BUILDMAPHB
   !byte SMDJ,SMDJ,SMDJ,SMDJ  
   !byte SMDJ+1,SMDJ+1
-
 SCBACKPOINT
   !byte 40,50,79,70,45,60,55
   !byte 70,66,42,50,61,53,56,47,74,42        
+STATUS
+  !byte 0
+BUILDING1
+        !byte $20,$21,$22,$23
+        !byte $34,$35,$36,$37
+        !byte $34,$35,$36,$37
+        !byte $34,$35,$36,$37
+        !byte $48,$49,$4A,$4B
+BUILDING2
+        !byte $60,$21,$38,$22,$61
+        ;HEX "2021222223"
+        !byte $34,$35,$4C,$36,$37
+        !byte $34,$35,$4C,$36,$37
+        !byte $34,$35,$4C,$36,$37
+        !byte $34,$35,$4C,$36,$37
+        !byte $34,$35,$4C,$36,$37
+        !byte $34,$35,$4C,$36,$37
+        !byte $62,$63,$5F,$4E,$4D
+BUILDING3
+        !byte $24,$25,$26,$27
+        !byte $34,$35,$36,$37
+        !byte $34,$35,$36,$37
+        !byte $34,$35,$36,$37
+        !byte $34,$35,$36,$37
+        !byte $62,$63,$4A,$4B
+BUILDING4
+        !byte $28,$29,$2A,$2B
+        !byte $2C,$2D,$2E,$2F
+        !byte $2C,$2D,$2E,$2F
+        !byte $30,$31,$3E,$3F
+BUILDING5
+        !byte $28,$29,$40,$2A,$2B
+        !byte $2C,$2D,$42,$2E,$2F
+        !byte $2C,$2D,$42,$2E,$2F
+        !byte $2C,$2D,$42,$2E,$2F
+        !byte $2C,$44,$43,$32,$33
+        !byte $30,$41,$31,$45,$46
+BUILDING6
+        !byte $51,$54,$53,$52
+        !byte $47,$2D,$2E,$50
+        !byte $47,$2D,$2E,$50
+        !byte $47,$2D,$2E,$50
+        !byte $47,$2D,$2E,$50
+        !byte $47,$2D,$2E,$50
+        !byte $3C,$3D,$32,$33
 
-STATUS  !byte 0
+AS      = 34
+AS1     = 8
+DAMAGETEXT
+  !byte AS1+4,AS1+1,AS1+13,AS1+1,AS1+7,AS1+5,1
+
+GEORGETEXT
+  !byte AS1+7,AS1+5,AS1+15,AS1+18,AS1+7,AS1+5
+
+RALPHTEXT
+  !byte AS1+18,AS1+1,AS1+12,AS1+16,AS1+8,1
+
+LIZZYTEXT
+        !byte AS1+12,AS1+9,AS1+26,AS1+26,AS1+25,1
+        !byte AS1+18,AS1+8,AS1+15,AS1+14,AS1+1,1,1,1
+        !byte AS1+9,1,AS1+12,AS1+15,AS1+22,AS1+5,1,1
+        !byte AS1+25,AS1+15,AS1+21,1,1,1
+
+RILY    !byte 0
+
+
+P1TEXT  !fill 8
+P2TEXT  !fill 8
+P3TEXT  !fill 8
+
+
+DAMAGE1
+        !byte 3,3,3,3,3,3,3,3
+DAMAGE2
+        !byte 1,1,1,1,1,1,1,1
+DAMAGE3
+        !byte 2,2,2,2,2,2,2,2
+        !fill 10
+SCORES
+SCORE1 !byte 0,0,0,0,0,0,$FF,$FF,$FF
+SCORE2 !byte 0,0,0,0,0,0,$FF,$FF,$FF
+SCORE3 !byte 0,0,0,0,0,0,$FF,$FF,$FF
+ENH     !byte 3,64
+LOSPEED !byte 0,0,0
+
+  
+  
 
 NODEM
         LDA #0
@@ -1001,93 +1070,7 @@ ITSAWINDOW
   CLC
   RTS
 
-BUILDING1
-        !byte $20,$21,$22,$23
-        !byte $34,$35,$36,$37
-        !byte $34,$35,$36,$37
-        !byte $34,$35,$36,$37
-        !byte $48,$49,$4A,$4B
 
-BUILDING2
-        !byte $60,$21,$38,$22,$61
-        ;HEX "2021222223"
-        !byte $34,$35,$4C,$36,$37
-        !byte $34,$35,$4C,$36,$37
-        !byte $34,$35,$4C,$36,$37
-        !byte $34,$35,$4C,$36,$37
-        !byte $34,$35,$4C,$36,$37
-        !byte $34,$35,$4C,$36,$37
-        !byte $62,$63,$5F,$4E,$4D
-
-BUILDING3
-        !byte $24,$25,$26,$27
-        !byte $34,$35,$36,$37
-        !byte $34,$35,$36,$37
-        !byte $34,$35,$36,$37
-        !byte $34,$35,$36,$37
-        !byte $62,$63,$4A,$4B
-
-BUILDING4
-        !byte $28,$29,$2A,$2B
-        !byte $2C,$2D,$2E,$2F
-        !byte $2C,$2D,$2E,$2F
-        !byte $30,$31,$3E,$3F
-
-BUILDING5
-        !byte $28,$29,$40,$2A,$2B
-        !byte $2C,$2D,$42,$2E,$2F
-        !byte $2C,$2D,$42,$2E,$2F
-        !byte $2C,$2D,$42,$2E,$2F
-        !byte $2C,$44,$43,$32,$33
-        !byte $30,$41,$31,$45,$46
-
-BUILDING6
-        !byte $51,$54,$53,$52
-        !byte $47,$2D,$2E,$50
-        !byte $47,$2D,$2E,$50
-        !byte $47,$2D,$2E,$50
-        !byte $47,$2D,$2E,$50
-        !byte $47,$2D,$2E,$50
-        !byte $3C,$3D,$32,$33
-
-AS      = 34
-AS1     = 8
-DAMAGETEXT
-  !byte AS1+4,AS1+1,AS1+13,AS1+1,AS1+7,AS1+5,1
-
-GEORGETEXT
-  !byte AS1+7,AS1+5,AS1+15,AS1+18,AS1+7,AS1+5
-
-RALPHTEXT
-  !byte AS1+18,AS1+1,AS1+12,AS1+16,AS1+8,1
-
-LIZZYTEXT
-        !byte AS1+12,AS1+9,AS1+26,AS1+26,AS1+25,1
-        !byte AS1+18,AS1+8,AS1+15,AS1+14,AS1+1,1,1,1
-        !byte AS1+9,1,AS1+12,AS1+15,AS1+22,AS1+5,1,1
-        !byte AS1+25,AS1+15,AS1+21,1,1,1
-
-RILY    !byte 0
-
-
-P1TEXT  !fill 8
-P2TEXT  !fill 8
-P3TEXT  !fill 8
-
-
-DAMAGE1
-        !byte 3,3,3,3,3,3,3,3
-DAMAGE2
-        !byte 1,1,1,1,1,1,1,1
-DAMAGE3
-        !byte 2,2,2,2,2,2,2,2
-        !fill 10
-SCORES
-SCORE1 !byte 0,0,0,0,0,0,$FF,$FF,$FF
-SCORE2 !byte 0,0,0,0,0,0,$FF,$FF,$FF
-SCORE3 !byte 0,0,0,0,0,0,$FF,$FF,$FF
-ENH     !byte 3,64
-LOSPEED !byte 0,0,0
 
 LOSENERGY
   INC LOSPEED,X

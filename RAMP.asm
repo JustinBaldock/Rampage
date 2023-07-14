@@ -10,6 +10,10 @@
   !byte $2C
 !end
 
+*=$1000 ; start address for 6502 code
+jmp MAIN
+
+!source "ram-map.asm"
 ;!source "ramp.asm"
 *=$7800
 ;!PSEUDOPC $7800
@@ -24,7 +28,6 @@
 !source "ape1.asm"
 !source "ape2.asm"
 
-*=$1000 ; start address for 6502 code
 ; RAMP
 MAIN
   SEI
@@ -1024,13 +1027,16 @@ WALKO   LDA #ADIE       ; SMALL MAN ?
         STA ACTION,X
         RTS
 
-TRANT   !byte $20,$21,$20,$21
-        !byte $22,$23,$22,$23      
+TRANT
+  !byte $20,$21,$20,$21
+  !byte $22,$23,$22,$23      
 
-DIE     LDA DIR,X       ; ACTION 10
-        BPL FCNL        
-        LDA #1
-        +NOPP    
+DIE
+  LDA DIR,X       ; ACTION 10
+  BPL FCNL        
+  LDA #1
+  +NOPP 
+  
 FCNL    LDA #-1
         CLC
         ADC X,X
@@ -1084,9 +1090,11 @@ OUTOF
   LDA #$15
   +NOPP
   
-ATN     LDA #0
-        STA FRAME,X
-.NOM     RTS     ; STAY AS YOU ARE
+ATN
+  LDA #0
+  STA FRAME,X
+.NOM
+  RTS     ; STAY AS YOU ARE
 
 ANYKEY  LDA FIRE,X
         ORA LEFT,X
@@ -1107,13 +1115,14 @@ FALL    LDA Y,X
 GETL
   RTS
 
-AAD     LDA Y,X
-        AND #15
-        CMP #12
-        BEQ NOF1
-        CMP #4
-        BEQ NOF1
-        RTS
+AAD
+  LDA Y,X
+  AND #15
+  CMP #12
+  BEQ NOF1
+  CMP #4
+  BEQ NOF1
+  RTS
 
 AAO
   LDA #189+7      ; ?
@@ -1141,11 +1150,11 @@ MODEL
   CMP #10
   BEQ AAD
   CMP #11
-        BEQ AAD
-        CMP #33
-        BEQ ADD
-        CMP #34
-        BEQ AAD
+  BEQ AAD
+  CMP #33
+  BEQ ADD
+  CMP #34
+  BEQ AAD
         CMP #35
         BEQ AAD
         CMP #36
@@ -1173,8 +1182,10 @@ ADD
   SEC
   RTS
 
-HITW    !byte 1,0,0
-HITW2   !byte 2,2,1
+HITW
+  !byte 1,0,0
+HITW2
+  !byte 2,2,1
 
 HIT     LDA LEFT,X
         ORA RIGHT,X
@@ -1274,18 +1285,21 @@ DETEC2  LDA DOWN,X
         STA CARB+1
         RTS
 
-UY      CMP #1
-        BNE TY
-        LDA #2
-        STA CARB+1
-        RTS
+UY
+  CMP #1
+  BNE TY
+  LDA #2
+  STA CARB+1
+  RTS
 
-POL     LDA CARS        ; EXPLODE IT
-        ORA #%01000000
-        STA CARS
-        LDA #0
-        STA COUNT+3
-TY      RTS
+POL
+  LDA CARS        ; EXPLODE IT
+  ORA #%01000000
+  STA CARS
+  LDA #0
+  STA COUNT+3
+TY
+  RTS
 
 DE      LDA Y,X
         CMP #189+7
@@ -1302,12 +1316,15 @@ DE      LDA Y,X
         CLC
         RTS
 
-RED     SEC
-        RTS
+RED
+  SEC
+  RTS
 
-LESTH   ADC #24         ; PIXELS X 12
-        CMP TRANX
-NOHIT   RTS
+LESTH
+  ADC #24         ; PIXELS X 12
+  CMP TRANX
+NOHIT
+  RTS
 
 KILCAR  BIT CARS
         BVC NOHIT
@@ -1381,7 +1398,6 @@ ONB     LDY COUNT,X
 DEAD
   RTS
 
-
 CLIMEAT
   !byte $05,$05,$05
   !byte $05,$05,$05
@@ -1408,15 +1424,21 @@ STG2
   STA COUNT,X
   RTS
 
-O       = 189+7+20    ; SPRITE OFFSET
-ONBX    !byte 0,0,0
-ONBX1   !byte 0,0,0
-BUILDPOINT      !byte 0
-SBXSTART        !byte 0,0,0,0,0,0,0,0
-SBXEND  !byte 0,0,0,0,0,0,0,0
-SBTOP   !byte 0,0,0
-        !byte 0,0,0,0,0
-MONONB  !fill 3
+ONBX
+  !byte 0,0,0
+ONBX1
+  !byte 0,0,0
+BUILDPOINT
+  !byte 0
+SBXSTART
+  !byte 0,0,0,0,0,0,0,0
+SBXEND
+  !byte 0,0,0,0,0,0,0,0
+SBTOP
+  !byte 0,0,0
+  !byte 0,0,0,0,0
+MONONB
+  !fill 3
 
 SY      = 2   ; FASTER ?
 
@@ -1733,18 +1755,20 @@ MEMXY
    STA MIKE1+1     ; COLOUR HIGH
    RTS
 
-COLRAML !byte $00,$28,$50,$78
-        !byte $A0,$C8,$F0,$18
-        !byte $40,$68,$90,$B8
-        !byte $E0,$08,$30,$58
-        !byte $80,$A8,$D0,$F8
-        !byte $20,$48,$70,$98
-        !byte $C0
+COLRAML
+  !byte $00,$28,$50,$78
+  !byte $A0,$C8,$F0,$18
+  !byte $40,$68,$90,$B8
+  !byte $E0,$08,$30,$58
+  !byte $80,$A8,$D0,$F8
+  !byte $20,$48,$70,$98
+  !byte $C0
 
-COLRAMH !byte 0,0,0,0,0,0
-        !byte 0,1,1,1,1,1,1
-        !byte 2,2,2,2,2,2,2
-        !byte 3,3,3,3,3
+COLRAMH
+  !byte 0,0,0,0,0,0
+  !byte 0,1,1,1,1,1,1
+  !byte 2,2,2,2,2,2,2
+  !byte 3,3,3,3,3
 
 
 ; UTILITIES FOR GAME

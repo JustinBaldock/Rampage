@@ -8,7 +8,6 @@ FISTX   !byte 0
 FISTY   !byte 0
 PUNCHX    !byte 0
 PUNCHY    !byte 0
-STORE   = $0900
 XOFFSET !byte 30,-30
 POYT1 !byte 6,2,3,2
 POXT1 !byte 0,-2,-4,2

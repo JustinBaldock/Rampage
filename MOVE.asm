@@ -8,7 +8,6 @@ CHCR
   BEQ BEND1        ; BUILD GONE !
   LDA SDAMAGE,X
   BEQ DROPIT      ; FALLING
-ENDLABEL2
 
 BEND  ; DO CRACKS HERE
 
@@ -101,17 +100,23 @@ SETUP1
   DEY
   BPL SETUP1
   RTS
-COUNTDOWN !byte 0
-XSTORE    !byte 0
-BANANA    !byte 0
-DUSTCHARS !byte $D9,$DA,$DB,$DC,$DD,$DE
-          !byte $DB,$D9,$DC,$DD,$DA,$D9,$DD,$DE
-          !byte $D9,$D9,$D9,$D9,$D9,$D9
-
-CRACKING  !fill 10,10
-
-TEMPC !byte 0
-TEMPR !byte 0
+  
+COUNTDOWN
+  !byte 0
+XSTORE
+  !byte 0
+BANANA
+  !byte 0
+DUSTCHARS
+  !byte $D9,$DA,$DB,$DC,$DD,$DE
+  !byte $DB,$D9,$DC,$DD,$DA,$D9,$DD,$DE
+  !byte $D9,$D9,$D9,$D9,$D9,$D9
+CRACKING
+  !fill 10,10
+TEMPC
+  !byte 0
+TEMPR
+  !byte 0
 
 SDAMAGE !byte 50,50,50,50,50,50,50,50,50
   ;BUILDTALL
