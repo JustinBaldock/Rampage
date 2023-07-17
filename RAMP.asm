@@ -2,6 +2,7 @@
 
 *=$0801 
 !byte $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096 ;basic loader
+;!byte $0c,$08,$01,$00,$9e,$33,$30,$37,$32,$30,$00,$00,$00,$00  ; 1 sys 30720, $7800 ;basic loader
 
 ; stop getting warnings about unused label
 !nowarn w1000
@@ -13,9 +14,12 @@
 *=$1000 ; start address for 6502 code
 jmp MAIN
 
+;*=$7800
+;jmp MAIN
+
+
 !source "ram-map.asm"
 ;!source "ramp.asm"
-*=$7800
 ;!PSEUDOPC $7800
 !source "build.asm"
 !source "irq.asm"
@@ -44,10 +48,12 @@ MAIN
   
   LDA #%00100101 ; bank the kernal rom out
   STA R6510
-  LDA #%10010101  ; VIC Bit 1-0 = $01 which is Bank2, BANK2=$8000-$BFFF, BANK3=$C000-$FFFF
+  ;LDA #%1001 0101  ; VIC Bit 1-0 = $01 which is Bank2, BANK2=$8000-$BFFF
+  LDA #%10010100  ; VIC Bit 1-0 = $00 which is Bank3, BANK3=$C000-$FFFF
   STA CIA2
-  LDA #%11011000  ; CHAR $E000
-  STA VIC_MEMORY_CONTROL_REGISTER      ; SCR  $F800
+  ;LDA #%11011000  ; CHAR $2000 offset in VIC bank, SCREEN $3400 offset, CHAR=$E000 SCREEN=$F400
+  LDA #%11101000  ; CHAR $2000 offset in VIC bank, SCREEN $3800 offset, CHAR=$E000 SCREEN=$F800
+  STA VIC_MEMORY_CONTROL_REGISTER 
   LDA #%11011000
   STA VIC_CONTROL_REGISTER2 ; Set Vic Control Register 2, No horizontal scroll, 40 Column + Multicolor On
   LDA #%00000011  ; BLANK OUT
@@ -1865,8 +1871,8 @@ SCREENWIPE
 screenwipe.start
   LDY #0 ; set loop counter to 0
 screenwipe.loop
-  LDA #%00001110 ; colour 6 = blue
-  ; this section is setting colour memory to blue?
+  LDA #%00001110 ; colour 14 = light blue
+  ; this section is setting colour memory to colour
   STA NYBBLE+$000,Y
   STA NYBBLE+$100,Y
   STA NYBBLE+$200,Y

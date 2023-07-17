@@ -8,15 +8,24 @@
 ;DSECT
 ;!PSEUDOPC $00
 
-SYNC    !fill 1
-LEFT    !fill 3
-RIGHT   !fill 3
-UP      !fill 3
-DOWN    !fill 3
-FIRE    !fill 3  ; ONLY 2 3 FOR DEMO
-JOY     !fill 1  ; DO NOT USE
-IRQTEMP !fill 1  ; WORKING OUT STUFF
-APECOUNT !fill 1 ; TO COPY WHAT SPRITE
+SYNC
+  !fill 1
+LEFT
+  !fill 3
+RIGHT
+  !fill 3
+UP
+  !fill 3
+DOWN
+  !fill 3
+FIRE
+  !fill 3  ; ONLY 2 3 FOR DEMO
+JOY
+  !fill 1  ; DO NOT USE
+IRQTEMP
+  !fill 1  ; WORKING OUT STUFF
+APECOUNT
+  !fill 1 ; TO COPY WHAT SPRITE
 NMIHOLD !fill 2  ; NMI TIMER A AND B
 IRQHOLD !fill 3  ; A=0 X=1 Y=2
 TMP     !fill 1

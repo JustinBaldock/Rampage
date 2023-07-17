@@ -1,13 +1,59 @@
 ;*********************************************************
+; master list, organised by address
+;*********************************************************
+D6510     = $00  ; DDR
+R6510     = $01  ; I/O PORT
+BACKDROP  = $0B00 ;to 1300
+BLOCKS    = $1000
+COLMEM    = $1300
+COLMEM1   = $1400
+CHRTAB    = $1500 ; START OF TABLES
+BL0       = $1C00 ; GEORGE
+BL1       = $1C00+$558  ; RALPH
+BL2       = $1C00+($558*2)  ; LIZZY
+BLR0      = $1C00+($558*3)  ; GRORGE REVERSED
+BLR1      = $1C00+($558*4)  ; RALPH REVERSED
+BLR2      = $1C00+($558*5)  ; LIZZY REVERSED
+SCHARS    = $2200
+BLSTART   = $3C10 ;to 4000      ; BLOCK
+DTILES    = $7000  ;to $7500
+CODE      = $7800
+BANK      = $C000
+CHAR      = $C000 ; 2K
+BUF0      = $CCA0; 48*6 TO STORE
+BUF1      = $CCA0+(48*6)
+BUF2      = $CCA0+(48*12) ; $33C
+NYBBLE    = $D800
+CIA1      = $DC00
+CIA2      = $DD00
+COL       = $F400 ; 1K
+TEMPCOL   = $F400
+TEMPCOL1  = $F800
+
+
+
+
+
+
+
+
+
+
+
+;*********************************************************
 ; from build.asm
 ;*********************************************************
 ;MUSIC          = $200  ;to $B00
-DTILES          = $7000  ;to $7500
+STORE           = $0900
 BACKDROP        = $0B00 ;to 1300
 COLMEM          = $1300
 COLMEM1         = $1400
 BLSTART         = $3C10 ;to 4000      ; BLOCK
+DTILES          = $7000  ;to $7500
 CODE            = $7800
+CHSET           = $E000
+CHARHB          = ($E0)/8
+CBASE           = CHSET+(220*8)
 TEMPCOL         = $F400
 TEMPCOL1        = $F800
 
@@ -69,8 +115,8 @@ Y7    = VIC+15
 SPRITE_7  = VIC+16 ; Was named MSB
 VIC_CONTROL_REGISTER1 = $D011 ; screen heigth, mode, etc etc. 
 RASTER    = $D012
-VIC_SPRITE_ENABLE    = VIC+21
-VIC_CONTROL_REGISTER2 = $D016 ; VIC_CONTROL_REGISTER2
+VIC_SPRITE_ENABLE     = $D015
+VIC_CONTROL_REGISTER2 = $D016 
 EXPANDY   = $D017 ; Sprite double height
 VIC_MEMORY_CONTROL_REGISTER = $D018 ; Set vic memory config
 VICIFR    = VIC+25

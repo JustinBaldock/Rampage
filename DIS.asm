@@ -156,18 +156,20 @@ SCPUTON
 
 ;********************************
 
+; 2023-07-17 Justin Baldock
+; 
 DRISET
   LDA #0
-  STA $FFFA
-  SEI
-  STA $D015
-  LDA #$1B
-  STA $D011
+  STA $FFFA ; why change part of NMI service routine pointer?
+  SEI ; disable interrupt
+  STA VIC_SPRITE_ENABLE ; turn off all sprites
+  LDA #$1B ; %0001 1011
+  STA VIC_CONTROL_REGISTER1 ; bit 0=unused, bits 1-3=char memory $2800-$2FFF in vic bank, bits 4-7=Screen ram $0400-$07FF in vic bank
   LDA #7
-  STA $D022
+  STA COLOUR1 ; set colour1 to be yellow
   LDA #11   
-  STA $D023
-  RTS
+  STA COLOUR2 ; set colour2 to be dark grey
+  RTS 
 
 ;*********************************
 
@@ -204,12 +206,12 @@ CLEAR
 DELPROG
   LDA #60
   STA DELDAVE
-INDEL
+.INDEL
   JSR JOYDAVE
   DEC DELDAVE+1             
-  BNE INDEL
+  BNE .INDEL
   DEC DELDAVE
-  BNE INDEL
+  BNE .INDEL
   RTS
 
 ;***********************************
