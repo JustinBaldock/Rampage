@@ -1,12 +1,12 @@
-;*********************************************************
+﻿;*********************************************************
 ; master list, organised by address
 ;*********************************************************
 D6510     = $00  ; DDR
 R6510     = $01  ; I/O PORT
-BACKDROP  = $0B00 ;to 1300
-BLOCKS    = $1000
-COLMEM    = $1300
-COLMEM1   = $1400
+BACKDROP  = $0B00 ;to 1300 - JB this appears to be used
+;BLOCKS    = $1000 ; JB - Not used
+COLMEM    = $1300 ; JB - This is used
+COLMEM1   = $1400 ; JB - This is used
 CHRTAB    = $1500 ; START OF TABLES
 BL0       = $1C00 ; GEORGE
 BL1       = $1C00+$558  ; RALPH
@@ -14,7 +14,7 @@ BL2       = $1C00+($558*2)  ; LIZZY
 BLR0      = $1C00+($558*3)  ; GRORGE REVERSED
 BLR1      = $1C00+($558*4)  ; RALPH REVERSED
 BLR2      = $1C00+($558*5)  ; LIZZY REVERSED
-SCHARS    = $2200
+;SCHARS    = $2200 ; JB - Not used
 BLSTART   = $3C10 ;to 4000      ; BLOCK
 DTILES    = $7000  ;to $7500
 CODE      = $7800
@@ -143,6 +143,23 @@ SPC7      = VIC+46
 NYBBLE    = $D800
 CIA1      = $DC00
 CIA2      = $DD00
+
+JOYSTICK2 = $DC00
+JOYSTICK1 = $DC01
+CIA1_PORTA = $DC02
+CIA1_PORTB = $DC03
+CIA1_INTERRUPT_CONTROL_STATUS = $DC0D
+CIA1_TIMER_A_CTRL = $DC0E
+CIA1_TIMER_B_CTRL = $DC0F
+
+CIA2_PORTA = $DD02
+CIA2_TIMER_A_CURRENT_L = $DD04
+CIA2_TIMER_A_CURRENT_H = $DD05
+CIA2_TIMER_B_CURRENT_L = $DD06
+CIA2_TIMER_B_CURRENT_H = $DD07
+CIA2_INTERRUPT_CONTROL_STATUS = $DD0D
+CIA2_TIMER_A_CTRL = $DD0E
+CIA2_TIMER_B_CTRL = $DD0F
 
 SPRITE0A  = COL+$3F8
 SPRITE1A  = SPRITE0A+1

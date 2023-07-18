@@ -1,4 +1,4 @@
-!to "rampage.prg",cbm
+﻿!to "rampage.prg",cbm
 
 *=$0801 
 !byte $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096 ;basic loader
@@ -40,7 +40,6 @@ MAIN
   LDY #2
   LDA #0
   STA VIC_SPRITE_ENABLE
-  
 .ZEROP ; Start at $00, offset 2 and set all zero page to 0
   STA D6510,Y
   INY
@@ -48,43 +47,43 @@ MAIN
   
   LDA #%00100101 ; bank the kernal rom out
   STA R6510
-  ;LDA #%1001 0101  ; VIC Bit 1-0 = $01 which is Bank2, BANK2=$8000-$BFFF
-  LDA #%10010100  ; VIC Bit 1-0 = $00 which is Bank3, BANK3=$C000-$FFFF
+  ;LDA #%1001 0101  ; JB - VIC Bit 1-0 = $01 which is Bank2, BANK2=$8000-$BFFF
+  LDA #%10010100  ; JB - VIC Bit 1-0 = $00 which is Bank3, BANK3=$C000-$FFFF
   STA CIA2
-  ;LDA #%11011000  ; CHAR $2000 offset in VIC bank, SCREEN $3400 offset, CHAR=$E000 SCREEN=$F400
-  LDA #%11101000  ; CHAR $2000 offset in VIC bank, SCREEN $3800 offset, CHAR=$E000 SCREEN=$F800
+  ;LDA #%11011000  ; JB - CHAR $2000 offset in VIC bank, SCREEN $3400 offset, CHAR=$E000 SCREEN=$F400
+  LDA #%11101000  ; JB - CHAR $2000 offset in VIC bank, SCREEN $3800 offset, CHAR=$E000 SCREEN=$F800
   STA VIC_MEMORY_CONTROL_REGISTER 
   LDA #%11011000
-  STA VIC_CONTROL_REGISTER2 ; Set Vic Control Register 2, No horizontal scroll, 40 Column + Multicolor On
+  STA VIC_CONTROL_REGISTER2 ; JB - Set Vic Control Register 2, No horizontal scroll, 40 Column + Multicolor On
   LDA #%00000011  ; BLANK OUT
-  STA VIC_CONTROL_REGISTER1 ; Set Vic Control Register 1, Vertical Scroll, 24 row, Screen OFF, Text mode
-  ; update non-maskable interrupt service routine
+  STA VIC_CONTROL_REGISTER1 ; JB - Set Vic Control Register 1, Vertical Scroll, 24 row, Screen OFF, Text mode
+  ; JB - update non-maskable interrupt service routine
   LDA #<NMIA
   STA $FFFA
   LDA #>NMIA
   STA $FFFB
-  ; update cold reset routine
+  ; JB - update cold reset routine
   LDA #<RESET
   STA $FFFC
   LDA #>RESET
   STA $FFFD
-  ; update interrupt service routine
+  ; JB - update interrupt service routine
   LDA #<IRQ
   STA $FFFE
   LDA #>IRQ
   STA $FFFF
   LDA #1
-  STA VICIMR ; Set Vic Interrupt Control Register, Sprite-background collision interrupt enabled
+  STA VICIMR ; JB - Set Vic Interrupt Control Register, Sprite-background collision interrupt enabled
   LDA #$7F
-  STA CIA1+13
-  STA CIA2+13
-  LDA CIA1+13
-  LDA CIA2+13
+  STA CIA1_INTERRUPT_CONTROL_STATUS
+  STA CIA2_INTERRUPT_CONTROL_STATUS
+  LDA CIA1_INTERRUPT_CONTROL_STATUS
+  LDA CIA2_INTERRUPT_CONTROL_STATUS
   LDA #0
-  STA CIA1+14
-  STA CIA1+15
-  STA CIA2+14
-  STA CIA2+15
+  STA CIA1_TIMER_A_CTRL
+  STA CIA1_TIMER_B_CTRL
+  STA CIA2_TIMER_A_CTRL
+  STA CIA2_TIMER_B_CTRL
   STA NMSB+1
   STA NMSB2+1
   STA BALLON
@@ -97,14 +96,14 @@ MAIN
   STA APECOUNT    ; ?
   STA TOGGLE
   STA OSIL
-  STA HELLI       ; STOP BIG ONES 
-  CLI ; clear interrupt disable (allow interrupts)
+  STA HELLI       ; STOP BIG ONES ?
+  CLI ; JB - clear interrupt disable (allow interrupts)
   JSR SCREENWIPE ; NYBBLES
   JSR CRUM
+  ; JB - prep and do someting
   LDY #62
   LDA #0
-  
-.BKANSP
+ .BKANSP
   STA BL*64+BANK,Y
   STA 253*64+BANK,Y     ; ON
   STA 254*64+BANK,Y     ; BORDER

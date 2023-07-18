@@ -1,4 +1,4 @@
-SMDJ            = $75   ; +$76
+﻿SMDJ            = $75   ; +$76
 BW              = 79
 ZERO            = 64
 BACKWIDE        = 80
@@ -1043,7 +1043,7 @@ OPENWINDOWS
   STA BUILD+1     
   ;LDX #5
   LDA SYNC
-  EOR CIA2+4
+  EOR CIA2_TIMER_A_CURRENT_L
   AND #63 
   TAY
   
