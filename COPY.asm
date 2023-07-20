@@ -110,13 +110,13 @@ WHICHT
   !word <CHRTAB+$300,<CHRTAB+$400
   !word <CHRTAB+$500,<CHRTAB+$600
 
-BLOCKM
-  !byte <BL0,<BL1,<BL2
-  !byte <BLR0,<BLR1,<BLR2
-
 BLOCKML
   !byte >BL0,>BL1,>BL2
   !byte >BLR0,>BLR1,>BLR2
+
+BLOCKM
+  !byte <BL0,<BL1,<BL2
+  !byte <BLR0,<BLR1,<BLR2
 
 BUFTBL
   !byte >BUF0,>BUF1,>BUF2
