@@ -4,6 +4,7 @@
 !byte $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096 ;basic loader
 ;!byte $0c,$08,$01,$00,$9e,$33,$30,$37,$32,$30,$00,$00,$00,$00  ; 1 sys 30720, $7800 ;basic loader
 
+
 ; stop getting warnings about unused label
 !nowarn w1000
 
@@ -16,7 +17,6 @@ jmp MAIN
 
 ;*=$7800
 ;jmp MAIN
-
 
 !source "ram-map.asm"
 ;!source "ramp.asm"
@@ -1884,3 +1884,6 @@ screenwipe.loop
   DEY ; decrease y
   BNE screenwipe.loop ; if y NOT 0 then loop
   RTS
+  
+  
+  
