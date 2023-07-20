@@ -1,4 +1,4 @@
-﻿!to "rampage.prg",cbm
+!to "rampage.prg",cbm
 
 *=$0801 
 !byte $0c,$08,$01,$00,$9e,$34,$30,$39,$36,$00,$00,$00,$00,$00  ; 1 sys 4096 ;basic loader
@@ -45,9 +45,9 @@ MAIN
   INY
   BNE .ZEROP
   
-  LDA #%00100101 ; bank the kernal rom out
+  LDA #%00110101 ; bank basic and kernal rom out
   STA R6510
-  ;LDA #%1001 0101  ; JB - VIC Bit 1-0 = $01 which is Bank2, BANK2=$8000-$BFFF
+  ;LDA #%10010101  ; JB - VIC Bit 1-0 = $01 which is Bank2, BANK2=$8000-$BFFF
   LDA #%10010100  ; JB - VIC Bit 1-0 = $00 which is Bank3, BANK3=$C000-$FFFF
   STA CIA2
   ;LDA #%11011000  ; JB - CHAR $2000 offset in VIC bank, SCREEN $3400 offset, CHAR=$E000 SCREEN=$F400
@@ -91,7 +91,7 @@ MAIN
   STA HEX1
   STA XCORD+0
   STA XCORD+1
-  STA CIA1+2      ; ELSE DOWN = 1
+  STA CIA1_PORTA      ; ELSE DOWN = 1
   STA RASTER
   STA APECOUNT    ; ?
   STA TOGGLE
@@ -146,37 +146,37 @@ MAIN
   DEY
   BPL .BKANSP
   LDA #0
-  STA BORDER ; set border black 
-  STA COLOUR0
+  STA BORDER  ; set border black 
+  STA COLOUR0 ; set colour0 = black
   STA PRIORITY
   LDA #11
-  STA COLOUR1
+  STA COLOUR1 ; set colour1 = dark grey
   LDA #15
-  STA COLOUR2
+  STA COLOUR2 ; set colour2 = light grey
   LDA #7
-  STA COLOUR3
+  STA COLOUR3 ; set colour3 = yellow
   LDA #189+7
   STA Y+0
   STA Y+1
   STA Y+2
   LDA #%00111111
-  STA MULTICOL
+  STA VIC_SPRITE_MULTICOLOR
   LDA #7
-  STA MULTI0
+  STA VIC_SPRITE_EXTRA_COLOR1
   LDA #11
-  STA MULTI1
+  STA VIC_SPRITE_EXTRA_COLOR2
   LDA #2
-  STA SPC0
-  STA SPC1
+  STA VIC_SPRITE_0_COLOR
+  STA VIC_SPRITE_1_COLOR
   LDA #8
-  STA SPC2
-  STA SPC3
+  STA VIC_SPRITE_2_COLOR
+  STA VIC_SPRITE_3_COLOR
   LDA #14
-  STA SPC4
-  STA SPC5
+  STA VIC_SPRITE_4_COLOR
+  STA VIC_SPRITE_5_COLOR
   LDA #5
-  STA SPC6
-  STA SPC7
+  STA VIC_SPRITE_6_COLOR
+  STA VIC_SPRITE_7_COLOR
   LDA #1
   STA HELDIR
   STA HELDIR+1
@@ -212,7 +212,7 @@ MAIN
   JSR FIRS0
   JSR FIRS1
   LDA #%11111111
-  STA VIC_SPRITE_ENABLE
+  STA VIC_SPRITE_ENABLE ; enable all sprites
   JSR AIR
 LOOP
   JSR JOYGET      ; JOYGET !!
@@ -1596,10 +1596,11 @@ PATHTH  !byte >(M0-2),>(M1-2),>(M2-2)
 
 SET0    LDA HUSED0
         BPL OFFS
-FIRS0   LDY #8
-        JSR RAND
-        AND #7
-        TAY
+FIRS0
+  LDY #8
+  JSR RAND
+  AND #7
+  TAY
 EXPI0   LDA PATHTL,Y
         STA TABML0
         LDA PATHTH,Y

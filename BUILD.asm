@@ -1,4 +1,4 @@
-﻿SMDJ            = $75   ; +$76
+SMDJ            = $75   ; +$76
 BW              = 79
 ZERO            = 64
 BACKWIDE        = 80
@@ -120,11 +120,9 @@ LIZZYTEXT
 
 RILY    !byte 0
 
-
 P1TEXT  !fill 8
 P2TEXT  !fill 8
 P3TEXT  !fill 8
-
 
 DAMAGE1
         !byte 3,3,3,3,3,3,3,3
@@ -140,8 +138,6 @@ SCORE3 !byte 0,0,0,0,0,0,$FF,$FF,$FF
 ENH     !byte 3,64
 LOSPEED !byte 0,0,0
 
-  
-  
 
 NODEM
         LDA #0
@@ -296,8 +292,7 @@ FLIPSCREEN
         JMP COPYCOL2
 
 COPYCOL1
-        LDY #39
-ENDLABEL3
+  LDY #39
         
 COPYCOL
         LDX TEMPCOL+(24*40),Y
@@ -366,7 +361,8 @@ COPYCOL
         DEY
         BMI COPOUT1
         JMP COPYCOL
-COPOUT1 RTS
+COPOUT1
+  RTS
 
 
 COPYCOL2
@@ -574,9 +570,6 @@ ALLB1
   CPY #6
   BNE ALLB1
   RTS
-
-
-
 
 PUTBUILD
   LDY HOWMANY

@@ -1,4 +1,4 @@
-﻿;*********************************************************
+;*********************************************************
 ; master list, organised by address
 ;*********************************************************
 D6510     = $00  ; DDR
@@ -31,7 +31,22 @@ TEMPCOL   = $F400
 TEMPCOL1  = $F800
 
 
-
+COLOR_BLACK   = 0
+COLOR_WHITE   = 1
+COLOR_RED     = 2
+COLOR_CYAN    = 3
+COLOR_PURPLE  = 4
+COLOR_GREEN   = 5
+COLOR_BLUE    = 6
+COLOR_YELLOW  = 7
+COLOR_ORANGE  = 8
+COLOR_BROWN   = 9
+COLOR_RED_LIGHT = 10
+COLOR_GREY_DARK = 11
+COLOR_GREY      = 12
+COLOR_GREEN_LIGHT = 13
+COLOR_BLUE_LIGHT  = 14
+COLOR_GREY_LIGHT  = 15
 
 
 
@@ -119,26 +134,26 @@ VIC_SPRITE_ENABLE     = $D015
 VIC_CONTROL_REGISTER2 = $D016 
 EXPANDY   = $D017 ; Sprite double height
 VIC_MEMORY_CONTROL_REGISTER = $D018 ; Set vic memory config
-VICIFR    = VIC+25
+VIC_INTERRUPT_STATUS_REGISTER = $D019
 VICIMR    = VIC+26 ; VIC-Interrupt-control-register
 PRIORITY  = VIC+27  
-MULTICOL  = VIC+28
+VIC_SPRITE_MULTICOLOR = $D01C ; MULTICOL
 EXPANDX   = VIC+29
 BORDER    = $D020
 COLOUR0   = $D021
 COLOUR1   = $D022
 COLOUR2   = $D023
 COLOUR3   = $D024
-MULTI0    = $D025 ; Sprite extra colour 1
-MULTI1    = $D026 ; Sprite extra colour 2
-SPC0      = VIC+39
-SPC1      = VIC+40
-SPC2      = VIC+41
-SPC3      = VIC+42
-SPC4      = VIC+43
-SPC5      = VIC+44
-SPC6      = VIC+45
-SPC7      = VIC+46
+VIC_SPRITE_EXTRA_COLOR1 = $D025 ; Sprite extra colour 1
+VIC_SPRITE_EXTRA_COLOR2 = $D026 ; Sprite extra colour 2
+VIC_SPRITE_0_COLOR  = $D027 ; Was SPC0
+VIC_SPRITE_1_COLOR  = $D028 ; Was SPC1 
+VIC_SPRITE_2_COLOR  = $D029
+VIC_SPRITE_3_COLOR  = $D02A
+VIC_SPRITE_4_COLOR  = $D02B
+VIC_SPRITE_5_COLOR  = $D02C
+VIC_SPRITE_6_COLOR  = $D02D
+VIC_SPRITE_7_COLOR  = $D02E ; Was SPC7
 
 NYBBLE    = $D800
 CIA1      = $DC00

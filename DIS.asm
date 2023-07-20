@@ -1,4 +1,4 @@
-﻿SHB   = $F8  ;SCREEN AT $F400 
+SHB   = $F8  ;SCREEN AT $F400 
 COLDIFF   = $1C
 
 BLCOLOR = COLMEM1
@@ -33,7 +33,7 @@ DRIVER2
   LDX #0
   ;JSR PLAYTUNE
   LDY #14
-  STY TILENUM
+  STY TILENUM ; Set tilenum = 14?
 ABCDR2
   LDA PLAYSELE,Y
   STA SELBUFF,Y
@@ -165,9 +165,9 @@ DRISET
   STA VIC_SPRITE_ENABLE ; turn off all sprites
   LDA #$1B ; %0001 1011
   STA VIC_CONTROL_REGISTER1 ; bit 0=unused, bits 1-3=char memory $2800-$2FFF in vic bank, bits 4-7=Screen ram $0400-$07FF in vic bank
-  LDA #7
+  LDA #COLOR_YELLOW
   STA COLOUR1 ; set colour1 to be yellow
-  LDA #11   
+  LDA #COLOR_GREY_DARK  
   STA COLOUR2 ; set colour2 to be dark grey
   RTS 
 
@@ -534,6 +534,7 @@ GETTEXT
   CMP #255    
   BNE PUTTEXT
   RTS
+  
 PUTTEXT
   STA $FFFF
   LDA GETTEXT+1
@@ -551,6 +552,7 @@ PUTTEXT
   ADC #0
   STA PUTTEXT+2
   JMP GETTEXT
+  
 NEXTLINE
   LDA GETTEXT+1
   CLC
@@ -807,6 +809,7 @@ SELTEXT
     !byte $0B,$0D,$51,$1C,$17,$51,$16,$0D,$20,$1C
     !byte $51,$0B,$11,$1C,$21,$51,$51,$51,$51,$51,$FF
 RESETALL
+
 MESPRI
   !byte $2F,$2B,$35,$35,$00,$3B,$31,$37,$FE
   !byte $25,$37,$26,$26,$2E,$27,$00,$39,$2A,$37,$2F,$32,$00,$28,$2E,$37,$2F,$32,$00,$26,$37,$30,$2D,$35,$FF
